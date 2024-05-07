@@ -2,9 +2,11 @@ package com.example.myapplication.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.R
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -31,4 +33,13 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+)
+
+val jetbrainsmono = FontFamily(
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W400),
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W500),
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W600),
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W700),
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W800),
+        Font(R.font.jetbrainsmono_variablefont_wght, FontWeight.W900),
 )

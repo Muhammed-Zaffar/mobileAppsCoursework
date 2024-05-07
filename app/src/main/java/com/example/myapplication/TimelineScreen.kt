@@ -49,18 +49,18 @@ fun FuellingEventItem(event: FuellingEvent) {
 //        elevation = 4.dp,
     ) {
         Column(modifier = Modifier.padding(16.dp)){
-            Text(text = "Fuel Event", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Refuelling", style = MaterialTheme.typography.titleLarge)
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Date: ${event.date}", style = MaterialTheme.typography.bodyMedium)
-                Text(text = "Total Cost: ${event.totalCost}")
+                Text(text = "Total Cost: £${event.formatDouble(event.totalCost)}")
             }
             Text(text = "Mileage: ${event.mileage}", textAlign = TextAlign.Right)
             Text(text = "Fuel Station: ${event.fuelStation}")
-            Text(text = "Litres: ${event.litres}")
-            Text(text = "Price: ${event.price}")
+            Text(text = "Litres: ${event.formatDouble(event.litres)}")
+            Text(text = "Price: ${event.formatDouble3(event.price)}")
             Text(text = "Fuel Type: ${event.fuelType}")
         }
     }
@@ -70,10 +70,12 @@ fun FuellingEventItem(event: FuellingEvent) {
 @Composable
 fun PreviewTimelineScreen() {
     // Preview the TimelineScreen with dummy data
+    println("hello")
+
     TimelineScreen(
         listOf(
-            FuellingEvent("2024-05-01", 100.0, "Station A", "Gasoline", 20.0, 2.50, 50.00),
-            FuellingEvent("2024-05-05", 150.0, "Station B", "Diesel", 25.0, 2.80, 70.00)
+            FuellingEvent("02/05/2024", 75000, "Costco - Leicester", "Regular Unleaded (E10)", 36.60, 1.419, 51.94),
+            FuellingEvent("23/03/2024", 74950, "Costco - Leicester", "Premium Unleaded (E5)",44.22, 1.489, 65.84)
         )
     )
 }
