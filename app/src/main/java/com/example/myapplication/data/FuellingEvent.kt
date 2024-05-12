@@ -22,18 +22,17 @@ class FuellingEvent(
         val df: DecimalFormat = DecimalFormat("0.00")
         return df.format(value)
     }
-    fun formatDouble3(value: Double): String {
+     fun formatDouble3(value: Double): String {
         val df3: DecimalFormat = DecimalFormat("0.000")
         return df3.format(value)
     }
 
-    // format the double values to 2 decimal places
-//    fun formatValues(): Unit {
-//        this.litres = formatDouble(litres)
-//        this.price = formatDouble3(price)
-//        this.totalCost = formatDouble(totalCost)
-//    }
-
+    companion object {
+        fun formatToTwoDecimalPlace(value: Double): String {
+            val df: DecimalFormat = DecimalFormat("0.00")
+            return df.format(value)
+        }
+    }
 
     override fun toString(): String {
         return "Date: $date\nMileage: $mileage\nFuel Station: $fuelStation\nFuel Type: $fuelType\nLitres: $litres\nPrice: $price\nTotal Cost: $totalCost"
