@@ -13,10 +13,6 @@ class FuellingEvent(
     var totalCost: Double
 ) {
 
-//    init {
-//        formatValues()
-//    }
-
     // format the double values to 2 decimal places
     fun formatDouble(value: Double): String {
         val df: DecimalFormat = DecimalFormat("0.00")

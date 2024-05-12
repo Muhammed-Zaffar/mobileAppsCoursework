@@ -118,7 +118,6 @@ fun FuellingEventItem(event: FuellingEvent) {
 @Composable
 fun PreviewTimelineScreen() {
     // Preview the TimelineScreen with dummy data
-    println("hello")
 
     TimelineScreen(
         listOf(
