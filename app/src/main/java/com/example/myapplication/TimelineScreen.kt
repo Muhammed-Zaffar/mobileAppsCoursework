@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -21,26 +22,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
 
 @Composable
-fun TimelineScreen(fuellingEvents: List<FuellingEvent>) {
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* Handle click here */ },
-                content = {
-                    Text("+", style = MaterialTheme.typography.bodyMedium)
-                }
-            )
-        },
+fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<FuellingEvent>?) {
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(
+            onClick = {
+                navController?.navigate("addEvent")
+            },
+            content = {
+                Text("+", style = MaterialTheme.typography.bodyMedium)
+            })
+    },
         floatingActionButtonPosition = FabPosition.End,
         content = { paddingValues ->  // Add this content lambda parameter
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)  // Use paddingValues provided by the Scaffold
-                    .padding(16.dp)  // Additional padding can be added as needed
+                    .padding(16.dp)
             ) {
                 Text(
                     text = "Fuel Timeline",
@@ -50,13 +52,31 @@ fun TimelineScreen(fuellingEvents: List<FuellingEvent>) {
                 )
 
                 LazyColumn {
-                    items(fuellingEvents.size) { index ->
-                        val event = fuellingEvents[index]
-                        FuellingEventItem(event)
+                    if (fuellingEvents != null) {
+                        items(fuellingEvents.size) { index ->
+                            val event = fuellingEvents.get(index)
+                            FuellingEventItem(event)
+                        }
                     }
                 }
             }
+        },
+        bottomBar = {
+            // Add a bottom bar if needed
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = { navController?.navigate("calculator") }) {
+                    Text("Go to calculator")
+                }
+                Button(onClick = { navController?.navigate("timeline") }) {
+                    Text("Go to timeline")
+                }
+            }
         }
+
     )
 }
 
@@ -119,26 +139,26 @@ fun FuellingEventItem(event: FuellingEvent) {
 fun PreviewTimelineScreen() {
     // Preview the TimelineScreen with dummy data
 
-    TimelineScreen(
-        listOf(
-            FuellingEvent(
-                "02/05/2024",
-                75000,
-                "Costco - Leicester",
-                "Regular Unleaded (E10)",
-                36.60,
-                1.419,
-                51.94
-            ),
-            FuellingEvent(
-                "23/03/2024",
-                74950,
-                "Costco - Leicester",
-                "Premium Unleaded (E5)",
-                44.22,
-                1.489,
-                65.84
-            )
-        )
-    )
+//    TimelineScreen(
+//        listOf(
+//            FuellingEvent(
+//                "02/05/2024",
+//                75000,
+//                "Costco - Leicester",
+//                "Regular Unleaded (E10)",
+//                36.60,
+//                1.419,
+//                51.94
+//            ),
+//            FuellingEvent(
+//                "23/03/2024",
+//                74950,
+//                "Costco - Leicester",
+//                "Premium Unleaded (E5)",
+//                44.22,
+//                1.489,
+//                65.84
+//            )
+//        )
+//    )
 }
