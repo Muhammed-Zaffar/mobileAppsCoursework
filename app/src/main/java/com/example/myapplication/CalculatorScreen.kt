@@ -148,8 +148,10 @@ fun CalculatorScreen() {
             onClick = {
                 val result =
                     if (distance.isNotEmpty() && fuelPrice.isNotEmpty() && fuelConsumption.isNotEmpty()) {
+                        val d = distance.toDouble() * 1.60934
+                        val c = 282.481f / fuelConsumption.toDouble()
                         val totalCost =
-                            distance.toFloat() * fuelPrice.toFloat() / fuelConsumption.toFloat()
+                            ((d * c ) / 100 ) * fuelPrice.toDouble()
                         "Total cost: £${FuellingEvent.formatToTwoDecimalPlace(totalCost.toDouble())}"
                     } else {
                         "Please fill all fields"

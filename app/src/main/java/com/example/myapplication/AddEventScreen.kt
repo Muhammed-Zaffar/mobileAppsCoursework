@@ -1,45 +1,51 @@
 package com.example.myapplication
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import android.app.DatePickerDialog
+import android.content.Context
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.input.KeyboardType
-import com.example.myapplication.data.FuellingEvent
-import android.app.DatePickerDialog
-import android.content.Context
-import android.widget.TextView
-import androidx.compose.foundation.clickable
-import java.util.*  // For using Calendar
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.MutableState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Icon
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import java.util.Calendar
 
+fun checkIfAnyFieldIsEmpty(
+    date: String, mileage: String, fuelStation: String,
+    fuelType: String, litres: String, price: String, totalCost: String
+): Boolean {
+    return date.isEmpty() || mileage.isEmpty() || fuelStation.isEmpty() ||
+            fuelType.isEmpty() || litres.isEmpty() || price.isEmpty() || totalCost.isEmpty()
+}
 
 
 fun ShowDatePicker(
@@ -52,13 +58,14 @@ fun ShowDatePicker(
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     val datePickerDialog = DatePickerDialog(
+//    DatePickerDialog(
         context,
         { _, selectedYear, selectedMonth, dayOfMonth ->
             // Update dateState with selected date
             dateState.value = "${dayOfMonth}/${selectedMonth + 1}/${selectedYear}"
         }, year, month, day
+//    ).show()
     )
-
     datePickerDialog.show()
 
 }
@@ -66,8 +73,9 @@ fun ShowDatePicker(
 @Composable
 fun AddEventScreen() {
     val context = LocalContext.current
+    var answer by remember { mutableStateOf("") }
     // Create a new FuellingEvent object
-    var date by remember { mutableStateOf("") }
+    var date: MutableState<String> = remember { mutableStateOf("") }
     var mileage by remember { mutableStateOf("") }
     var fuelStation by remember { mutableStateOf("") }
     var fuelType by remember { mutableStateOf("") }
@@ -113,8 +121,8 @@ fun AddEventScreen() {
                 horizontalAlignment = Alignment.Start
             ) {
                 OutlinedTextField(
-                    value = date,
-                    onValueChange = { date = it },
+                    value = date.value,
+                    onValueChange = { date.value = it },
                     readOnly = true,
                     label = {
                         Text(
@@ -125,13 +133,23 @@ fun AddEventScreen() {
                     },
                     trailingIcon = {
                         Icon(Icons.Filled.DateRange, contentDescription = "Select Date",
-                            modifier = Modifier.clickable { ShowDatePicker(context, mutableStateOf(date)) })
+                            modifier = Modifier.clickable {
+                                ShowDatePicker(
+                                    context,
+                                    date
+                                )
+                            })
                     },
                     modifier = Modifier
                         .padding(start = 10.dp, bottom = 10.dp)
                         .fillMaxWidth(0.75f)
-                        .clickable { ShowDatePicker(context, mutableStateOf(date)) }  // Open DatePicker when the TextField is clicked
-                    ,
+                        .clickable {
+                            ShowDatePicker(
+                                context,
+                                date
+                            )
+                            Log.d("AddEventScreen", "Date: ${date.value}") // Log the selected date
+                        },  // Open DatePicker when the TextField is clicked
                 )
 
                 Row {
@@ -259,6 +277,41 @@ fun AddEventScreen() {
                 }
             }
         }
+
+
+        Button(
+            onClick = {
+                val result =
+                    if (!checkIfAnyFieldIsEmpty(
+                            date.value,
+                            mileage,
+                            fuelStation,
+                            fuelType,
+                            litres,
+                            price,
+                            totalCost
+                        )
+                    ) {
+                        // add the event to the list then sync with database
+                        "Event added successfully"
+                    } else {
+                        Log.d("AddEventScreen", "Date: ${date.value}") // Log the selected date
+                        "Please fill all fields"
+                    }
+                answer = result
+                Log.d("AddEventScreen", "Result: $result") // Log the result
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(
+                text = "add event",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+            )
+        }
+
     }
 }
 
