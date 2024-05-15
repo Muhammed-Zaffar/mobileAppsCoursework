@@ -2,27 +2,35 @@ package com.example.myapplication
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -36,6 +44,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -45,6 +54,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import java.util.Calendar
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.widget.ImageView
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 
 fun checkIfAnyFieldIsEmpty(
     date: String, mileage: String, fuelStation: String,
@@ -83,6 +112,23 @@ fun AddEventScreen(navController: NavController? = null) {
     val context = LocalContext.current
     var answer by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+        Log.d("ImagePickerIcon", "Image URI: $uri")
+    }
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            pickImageLauncher.launch("image/*")
+            Log.d("ImagePickerIcon", "Permission granted")
+        } else {
+            Log.e("ImagePickerIcon", "Permission denied by user")
+        }
+    }
 
     // Create a new FuellingEvent object
     var date: MutableState<String> = remember { mutableStateOf("") }
@@ -121,10 +167,12 @@ fun AddEventScreen(navController: NavController? = null) {
             }
         },
         content = { paddingValues ->
+            val scrollState = rememberScrollState()
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)  // Use paddingValues provided by the Scaffold
+                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
@@ -156,8 +204,7 @@ fun AddEventScreen(navController: NavController? = null) {
                         OutlinedTextField(
                             value = date.value,
                             onValueChange = { },
-//                    readOnly = true,
-//                    enabled = false,
+                            readOnly = true,
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
                             label = {
                                 Text(
@@ -179,7 +226,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                 )
                             },
                             modifier = Modifier
-                                .padding(start = 10.dp, bottom = 10.dp)
+                                .padding(start = 10.dp)
                                 .fillMaxWidth(0.75f)
                         )
 
@@ -194,7 +241,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(mileageFocusRequester),
                                 keyboardOptions = KeyboardOptions(
@@ -207,7 +254,9 @@ fun AddEventScreen(navController: NavController? = null) {
                             )
                             Text(
                                 text = "miles",
-                                modifier = Modifier.padding(start = 10.dp, top = 20.dp),
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                             )
@@ -224,7 +273,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(fuelStationFocusRequester),
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -245,7 +294,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(fuelTypeFocusRequester),
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -266,7 +315,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(litresFocusRequester),
                                 keyboardOptions = KeyboardOptions(
@@ -279,7 +328,9 @@ fun AddEventScreen(navController: NavController? = null) {
                             )
                             Text(
                                 text = "litres",
-                                modifier = Modifier.padding(start = 10.dp, top = 20.dp),
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                             )
@@ -296,7 +347,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(priceFocusRequester),
                                 keyboardOptions = KeyboardOptions(
@@ -309,7 +360,9 @@ fun AddEventScreen(navController: NavController? = null) {
                             )
                             Text(
                                 text = "GBP",
-                                modifier = Modifier.padding(start = 10.dp, top = 20.dp),
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                             )
@@ -326,7 +379,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(start = 10.dp, bottom = 10.dp)
+                                    .padding(start = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(totalCostFocusRequester),
                                 keyboardOptions = KeyboardOptions(
@@ -340,9 +393,61 @@ fun AddEventScreen(navController: NavController? = null) {
                             )
                             Text(
                                 text = "GBP",
-                                modifier = Modifier.padding(start = 10.dp, top = 20.dp),
+                                modifier = Modifier
+                                    .padding(start = 10.dp, top = 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = "",
+                            onValueChange = {},
+                            label = {
+                                Text(
+                                    text = "Upload pictures",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                                )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                    contentDescription = "Upload pictures",
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .clickable {
+                                            when {
+                                                ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED -> {
+                                                    pickImageLauncher.launch("image/*")
+                                                    }
+                                                else -> {
+                                                    requestPermissionLauncher.launch(
+                                                        android.Manifest.permission.READ_MEDIA_IMAGES)
+                                                }
+                                            }
+                                        }
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(start = 10.dp, bottom = 10.dp)
+                                .fillMaxWidth(0.75f),
+                            readOnly = true,
+                            colors = OutlinedTextFieldDefaults.colors()
+                        )
+
+                        imageUri?.let {uri ->
+                            val imageStream = context.contentResolver.openInputStream(uri)
+                            val imageBitmap = android.graphics.BitmapFactory.decodeStream(imageStream)
+                            Image(
+                                bitmap = imageBitmap.asImageBitmap(),
+                                contentDescription = "Uploaded image",
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .width(100.dp)
+                                    .height(100.dp)
+//                                    .size(100.dp)
                             )
                         }
                     }

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
 //@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
+//    ActivityResultContracts.RequestPermission()
     val nav = rememberNavController()
     NavHost(navController = nav, startDestination = "timeline") {
         composable("calculator") { CalculatorScreen(nav) }
@@ -63,3 +65,10 @@ fun GreetingPreview() {
     }
 //    CalculatorScreen()
 }
+
+//TODO:
+//allow adding pictures to an event
+//touch and hold on an event to bring up a menu to:
+//    share
+//    edit
+//    delete
