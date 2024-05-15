@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,6 +82,8 @@ fun ShowDatePicker(
 fun AddEventScreen(navController: NavController? = null) {
     val context = LocalContext.current
     var answer by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
+
     // Create a new FuellingEvent object
     var date: MutableState<String> = remember { mutableStateOf("") }
     var mileage by remember { mutableStateOf("") }
@@ -370,6 +373,7 @@ fun AddEventScreen(navController: NavController? = null) {
                             }
                         answer = result
                         Log.d("AddEventScreen", "Result: $result") // Log the result
+                        showDialog = true
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -381,6 +385,22 @@ fun AddEventScreen(navController: NavController? = null) {
                         fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                     )
                 }
+
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Incomplete Form") },
+                        text = { Text("Please fill all fields before submitting.") },
+                        confirmButton = {
+                            Button(
+                                onClick = { showDialog = false }
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    )
+                }
+
 
             }
         })

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,9 @@ fun CalculatorScreen(navController: NavController? = null) {
     var fuelPrice by remember { mutableStateOf("") }
     var fuelConsumption by remember { mutableStateOf("") }
     var answer by remember { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
+
 
     Scaffold(
         bottomBar = {
@@ -178,6 +182,7 @@ fun CalculatorScreen(navController: NavController? = null) {
                             }
                         answer = result
                         Log.d("CalculatorScreen", "Result: $result") // Log the result
+                        showDialog = true
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -189,21 +194,20 @@ fun CalculatorScreen(navController: NavController? = null) {
                         fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                     )
                 }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
 
-                ) {
-                    Row {
-                        Text(
-                            text = answer,
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center,
-                            fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght)),
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Incomplete Form") },
+                        text = { Text("Please fill all fields before submitting.") },
+                        confirmButton = {
+                            Button(
+                                onClick = { showDialog = false }
+                            ) {
+                                Text("OK")
+                            }
+                        }
+                    )
                 }
 
             }
