@@ -123,29 +123,24 @@ fun AddEventScreen(navController: NavController? = null) {
                     .fillMaxSize()
                     .padding(paddingValues)  // Use paddingValues provided by the Scaffold
             ) {
-                Card(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(8.dp),  // Additional padding can be added as needed
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)  // Additional padding can be added as needed
-                    ) {
-                        Text(
-                            text = "Add a new event",
-                            style = MaterialTheme.typography.headlineLarge,
-                            textAlign = TextAlign.Center,
-                            fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-
-                        )
-                    }
+                    Text(
+                        text = "Add a new event",
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Justify,
+                        fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                    )
                 }
 
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 ) {
                     // Add a form to add a new event
                     Column(
@@ -271,7 +266,10 @@ fun AddEventScreen(navController: NavController? = null) {
                                     .padding(start = 10.dp, bottom = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(litresFocusRequester),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
                                 keyboardActions = KeyboardActions(onNext = {
                                     priceFocusRequester.requestFocus()
                                 })
@@ -298,7 +296,10 @@ fun AddEventScreen(navController: NavController? = null) {
                                     .padding(start = 10.dp, bottom = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(priceFocusRequester),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
                                 keyboardActions = KeyboardActions(onNext = {
                                     totalCostFocusRequester.requestFocus()
                                 })
@@ -325,7 +326,10 @@ fun AddEventScreen(navController: NavController? = null) {
                                     .padding(start = 10.dp, bottom = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(totalCostFocusRequester),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                ),
                                 keyboardActions = KeyboardActions(onDone = {
                                     totalCostFocusRequester.freeFocus()
                                     keyboardController?.hide()
