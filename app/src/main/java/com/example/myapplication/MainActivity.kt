@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import coil.compose.rememberImagePainter
 import com.example.myapplication.data.FuellingEvent
 import android.os.Bundle
 import androidx.activity.ComponentActivity

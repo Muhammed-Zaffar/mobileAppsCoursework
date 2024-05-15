@@ -74,6 +74,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import coil.compose.rememberImagePainter
 
 fun checkIfAnyFieldIsEmpty(
     date: String, mileage: String, fuelStation: String,
@@ -112,9 +113,9 @@ fun AddEventScreen(navController: NavController? = null) {
     val context = LocalContext.current
     var answer by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by remember { mutableStateOf<List<Uri>>(listOf()) }
 
-    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uri: List<@JvmSuppressWildcards Uri> ->
         imageUri = uri
         Log.d("ImagePickerIcon", "Image URI: $uri")
     }
@@ -419,12 +420,17 @@ fun AddEventScreen(navController: NavController? = null) {
                                         .padding(10.dp)
                                         .clickable {
                                             when {
-                                                ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED -> {
+                                                ContextCompat.checkSelfPermission(
+                                                    context,
+                                                    android.Manifest.permission.READ_MEDIA_IMAGES
+                                                ) == PackageManager.PERMISSION_GRANTED -> {
                                                     pickImageLauncher.launch("image/*")
-                                                    }
+                                                }
+
                                                 else -> {
                                                     requestPermissionLauncher.launch(
-                                                        android.Manifest.permission.READ_MEDIA_IMAGES)
+                                                        android.Manifest.permission.READ_MEDIA_IMAGES
+                                                    )
                                                 }
                                             }
                                         }
@@ -437,18 +443,19 @@ fun AddEventScreen(navController: NavController? = null) {
                             colors = OutlinedTextFieldDefaults.colors()
                         )
 
-                        imageUri?.let {uri ->
-                            val imageStream = context.contentResolver.openInputStream(uri)
-                            val imageBitmap = android.graphics.BitmapFactory.decodeStream(imageStream)
-                            Image(
-                                bitmap = imageBitmap.asImageBitmap(),
-                                contentDescription = "Uploaded image",
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .width(100.dp)
-                                    .height(100.dp)
-//                                    .size(100.dp)
-                            )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.padding(8.dp)
+                        ) {
+                            imageUri.forEach { uri ->
+                                Image(
+                                    painter = rememberImagePainter(uri), // using coil to load images because it caches them
+                                    contentDescription = "Uploaded image",
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .height(100.dp)
+                                )
+                            }
                         }
                     }
                 }
