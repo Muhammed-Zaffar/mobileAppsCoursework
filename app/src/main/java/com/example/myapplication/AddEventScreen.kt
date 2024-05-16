@@ -463,7 +463,7 @@ fun AddEventScreen(navController: NavController? = null) {
 
                 Button(
                     onClick = {
-                        val result =
+                        answer =
                             if (!checkIfAnyFieldIsEmpty(
                                     date.value,
                                     mileage,
@@ -481,11 +481,10 @@ fun AddEventScreen(navController: NavController? = null) {
                                     "AddEventScreen",
                                     "Date: ${date.value}"
                                 ) // Log the selected date
+                                showDialog = true
                                 "Please fill all fields"
                             }
-                        answer = result
-                        Log.d("AddEventScreen", "Result: $result") // Log the result
-                        showDialog = true
+                        Log.d("AddEventScreen", "Result: $answer") // Log the result
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
