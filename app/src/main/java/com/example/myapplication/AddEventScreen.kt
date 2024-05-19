@@ -53,8 +53,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.myapplication.data.FuellingEvent
+import com.example.myapplication.data.FuellingEventViewModel
 import java.util.Calendar
 
 fun checkIfAnyFieldIsEmpty(
@@ -66,7 +69,7 @@ fun checkIfAnyFieldIsEmpty(
 }
 
 
-fun ShowDatePicker(
+fun showDatePicker(
     context: Context,
     dateState: MutableState<String>
 ) {
@@ -88,17 +91,26 @@ fun ShowDatePicker(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AddEventScreen(navController: NavController? = null) {
+fun AddEventScreen(navController: NavController? = null, view_model: FuellingEventViewModel = viewModel()) {
     val context = LocalContext.current
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    // Create a new FuellingEvent object
+    val date: MutableState<String> = rememberSaveable { mutableStateOf("") }
+    var mileage by rememberSaveable { mutableStateOf("") }
+    var fuelStation by rememberSaveable { mutableStateOf("") }
+    var fuelType by rememberSaveable { mutableStateOf("") }
+    var litres by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+    var totalCost by rememberSaveable { mutableStateOf("") }
     var imageUri by rememberSaveable { mutableStateOf<List<Uri>>(listOf()) }
 
+    // Activity result launcher for picking images
     val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uri: List<@JvmSuppressWildcards Uri> ->
         imageUri = uri
         Log.d("ImagePickerIcon", "Image URI: $uri")
     }
-
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -109,15 +121,6 @@ fun AddEventScreen(navController: NavController? = null) {
             Log.e("ImagePickerIcon", "Permission denied by user")
         }
     }
-
-    // Create a new FuellingEvent object
-    val date: MutableState<String> = rememberSaveable { mutableStateOf("") }
-    var mileage by rememberSaveable { mutableStateOf("") }
-    var fuelStation by rememberSaveable { mutableStateOf("") }
-    var fuelType by rememberSaveable { mutableStateOf("") }
-    var litres by rememberSaveable { mutableStateOf("") }
-    var price by rememberSaveable { mutableStateOf("") }
-    var totalCost by rememberSaveable { mutableStateOf("") }
 
     // focus requesters
     val mileageFocusRequester = FocusRequester()
@@ -197,7 +200,7 @@ fun AddEventScreen(navController: NavController? = null) {
                                 Icon(Icons.Filled.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
-                                            ShowDatePicker(context, date)
+                                            showDatePicker(context, date)
                                             Log.d(
                                                 "AddEventScreen",
                                                 "Date: ${date.value}"
@@ -453,7 +456,21 @@ fun AddEventScreen(navController: NavController? = null) {
                                     totalCost
                                 )
                             ) {
+                                view_model.insert(
+                                    FuellingEvent(
+                                        date = date.value,
+                                        mileage = mileage.toInt(),
+                                        fuelStation = fuelStation,
+                                        fuelType = fuelType,
+                                        litres = litres.toDouble(),
+                                        price = price.toDouble(),
+                                        totalCost = totalCost.toDouble(),
+                                        imageUri = imageUri
+                                    )
+                                )
                                 // add the event to the list then sync with database
+                                Log.d("AddEventScreen", "imageUri: ${imageUri::class.java.typeName}")
+                                navController?.popBackStack()
                                 "Event added successfully"
                             } else {
                                 Log.d(

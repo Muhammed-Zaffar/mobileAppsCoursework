@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
@@ -29,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,12 +47,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
+import com.example.myapplication.data.FuellingEventViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<FuellingEvent>?) {
+fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<FuellingEvent>?, view_model: FuellingEventViewModel = viewModel()) {
+    val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
+    if (fuellingEvents != null) {
+        fuellingEvents.forEach { event ->
+            view_model.insert(event)
+//            Log.d("TimelineScreen", "Inserted ${event.date}")
+        }
+//        Log.d("TimelineScreen", "Inserted ${fuellingEvents.size} events")
+    }
+
     Scaffold(floatingActionButton = {
         FloatingActionButton(
             onClick = {
@@ -75,12 +89,15 @@ fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<Fu
                 )
 
                 LazyColumn {
-                    if (fuellingEvents != null) {
-                        items(fuellingEvents.size) { index ->
-                            val event = fuellingEvents.get(index)
-                            FuellingEventItem(event)
+                    if (allFuellingEvents != null) {
+                        for (fuellingEvent in allFuellingEvents!!) {
+                            item {
+                                FuellingEventItem(fuellingEvent)
+                            }
                         }
                     }
+                    Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
+                    Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
                 }
             }
         },
@@ -225,26 +242,30 @@ fun onEdit() {
 fun PreviewTimelineScreen() {
 //     Preview the TimelineScreen with dummy data
 
-    TimelineScreen(
-        fuellingEvents = listOf(
-            FuellingEvent(
-                "02/05/2024",
-                75000,
-                "Costco - Leicester",
-                "Regular Unleaded (E10)",
-                36.60,
-                1.419,
-                51.94
-            ),
-            FuellingEvent(
-                "23/03/2024",
-                74950,
-                "Costco - Leicester",
-                "Premium Unleaded (E5)",
-                44.22,
-                1.489,
-                65.84
-            )
-        )
-    )
+//    TimelineScreen(
+//        fuellingEvents = listOf(
+//            FuellingEvent(
+//                0,
+//                "02/05/2024",
+//                75000,
+//                "Costco - Leicester",
+//                "Regular Unleaded (E10)",
+//                36.60,
+//                1.419,
+//                51.94,
+//                listOf()
+//            ),
+//            FuellingEvent(
+//                1,
+//                "23/03/2024",
+//                74950,
+//                "Costco - Leicester",
+//                "Premium Unleaded (E5)",
+//                44.22,
+//                1.489,
+//                65.84,
+//                listOf()
+//            )
+//        )
+//    )
 }

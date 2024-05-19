@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
@@ -67,4 +69,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0") // For lifecycle features
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0") // If using LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // For ViewModel utilities in Compose
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+
 }

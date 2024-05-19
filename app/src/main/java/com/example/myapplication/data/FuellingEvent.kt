@@ -1,8 +1,13 @@
 package com.example.myapplication.data
 
+import android.net.Uri
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.text.DecimalFormat
 
-class FuellingEvent(
+@Entity(tableName = "fuelling_events")
+data class FuellingEvent(
+    @PrimaryKey(autoGenerate = true) var id: Int = 0,
     var date: String,
     var mileage: Int,
     var fuelStation: String,
@@ -10,7 +15,8 @@ class FuellingEvent(
 
     var litres: Double,
     var price: Double,
-    var totalCost: Double
+    var totalCost: Double,
+    var imageUri: List<Uri>? = listOf()
 ) {
 
     // format the double values to 2 decimal places
