@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -278,7 +280,26 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                                 keyboardActions = KeyboardActions(onNext = {
                                     fuelTypeFocusRequester.requestFocus()
-                                })
+                                }),
+                                trailingIcon = {
+                                    Icon(
+                                        Icons.Filled.LocationOn,
+                                        contentDescription = "Location",
+                                        modifier = Modifier
+                                            .clickable {
+                                                // Open the phone's default map app
+                                                val gmmIntentUri =
+                                                    Uri.parse("geo:0,0?q=gas_station $fuelStation")
+                                                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                                                mapIntent.setPackage("com.google.android.apps.maps")
+                                                context.startActivity(mapIntent)
+                                                Log.d(
+                                                    "AddEventScreen",
+                                                    "Fuel Station: $fuelStation"
+                                                ) // Log the fuel station
+                                            }
+                                    )
+                                }
                             )
                         }
 
