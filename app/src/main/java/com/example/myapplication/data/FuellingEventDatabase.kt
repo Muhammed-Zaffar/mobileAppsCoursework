@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [FuellingEvent::class], version = 2, exportSchema = false)
+@Database(entities = [FuellingEvent::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class FuellingEventDatabase: RoomDatabase() {
     abstract fun fuellingEventDAO(): FuellingEventDAO
@@ -19,7 +19,9 @@ abstract class FuellingEventDatabase: RoomDatabase() {
                     context.applicationContext,
                     FuellingEventDatabase::class.java,
                     "fuelling_event_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

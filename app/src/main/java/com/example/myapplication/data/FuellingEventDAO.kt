@@ -19,7 +19,7 @@ interface FuellingEventDAO {
     @Delete
     suspend fun delete(fuellingEvent: FuellingEvent)
 
-    @Query("SELECT * FROM fuelling_events")
+    @Query("SELECT * FROM fuelling_events ORDER BY date DESC")
     fun getAllFuellingEvents(): LiveData<List<FuellingEvent>>
 
     @Query("SELECT * FROM fuelling_events WHERE id = :id")

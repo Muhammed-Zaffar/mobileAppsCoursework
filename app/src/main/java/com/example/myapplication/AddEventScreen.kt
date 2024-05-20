@@ -32,8 +32,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -58,7 +60,11 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
+import java.sql.Date
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import kotlin.math.absoluteValue
 
 fun checkIfAnyFieldIsEmpty(
     date: String, mileage: String, fuelStation: String,
@@ -71,9 +77,11 @@ fun checkIfAnyFieldIsEmpty(
 
 fun showDatePicker(
     context: Context,
-    dateState: MutableState<String>
+    dateState: MutableState<Long>,
+//    onDateSelected: (Long) -> Unit
 ) {
     val calendar = Calendar.getInstance()
+    calendar.timeInMillis = dateState.value  // Initialize the calendar to the current date state
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -82,7 +90,10 @@ fun showDatePicker(
         context,
         { _, selectedYear, selectedMonth, dayOfMonth ->
             // Update dateState with selected date
-            dateState.value = "${dayOfMonth}/${selectedMonth + 1}/${selectedYear}"
+//            dateState.value = "${dayOfMonth}/${selectedMonth + 1}/${selectedYear}"
+//            onDateSelected(calendar.timeInMillis)
+            calendar.set(selectedYear, selectedMonth, dayOfMonth)
+            dateState.value = calendar.timeInMillis
         }, year, month, day
     )
     datePickerDialog.show()
@@ -95,9 +106,12 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
     val context = LocalContext.current
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
+    // State for the date as timestamp
+    var dateTimestamp by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
+    val dateTimestampState = rememberSaveable { mutableStateOf(dateTimestamp) }
 
     // Create a new FuellingEvent object
-    val date: MutableState<String> = rememberSaveable { mutableStateOf("") }
+    val date = Date(dateTimestampState.value)  // Convert timestamp to java.sql.Date
     var mileage by rememberSaveable { mutableStateOf("") }
     var fuelStation by rememberSaveable { mutableStateOf("") }
     var fuelType by rememberSaveable { mutableStateOf("") }
@@ -185,7 +199,8 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                         horizontalAlignment = Alignment.Start
                     ) {
                         OutlinedTextField(
-                            value = date.value,
+//                            value = dateTimestamp.toString(),
+                            value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value)),
                             onValueChange = { },
                             readOnly = true,
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
@@ -200,10 +215,11 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                                 Icon(Icons.Filled.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
-                                            showDatePicker(context, date)
+                                            showDatePicker(context, dateTimestampState)
                                             Log.d(
                                                 "AddEventScreen",
-                                                "Date: ${date.value}"
+                                                "Date: ${dateTimestampState.value} \n" +
+                                                        "${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value))}"
                                             ) // Log the selected date
                                         }
                                 )
@@ -447,7 +463,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                     onClick = {
                         answer =
                             if (!checkIfAnyFieldIsEmpty(
-                                    date.value,
+                                    date.toString(),
                                     mileage,
                                     fuelStation,
                                     fuelType,
@@ -458,7 +474,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                             ) {
                                 view_model.insert(
                                     FuellingEvent(
-                                        date = date.value,
+                                        date = date,
                                         mileage = mileage.toInt(),
                                         fuelStation = fuelStation,
                                         fuelType = fuelType,
@@ -475,7 +491,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                             } else {
                                 Log.d(
                                     "AddEventScreen",
-                                    "Date: ${date.value}"
+                                    "Date: ${date}"
                                 ) // Log the selected date
                                 showDialog = true
                                 "Please fill all fields"
