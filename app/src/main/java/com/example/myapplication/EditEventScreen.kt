@@ -493,7 +493,7 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
                                 // add the event to the list then sync with database
                                 Log.d("EditEventScreen", "imageUri: ${imageUri::class.java.typeName}")
                                 navController?.popBackStack()
-                                "Event added successfully"
+                                "Event updated successfully"
                             } else {
                                 Log.d(
                                     "EditEventScreen",
