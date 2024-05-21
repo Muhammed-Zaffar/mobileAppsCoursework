@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
@@ -54,8 +55,37 @@ import com.example.myapplication.data.FuellingEventViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<FuellingEvent>?, view_model: FuellingEventViewModel = viewModel()) {
+fun TimelineScreen(
+    navController: NavController? = null,
+    fuellingEvents: List<FuellingEvent>?,
+    view_model: FuellingEventViewModel = viewModel()
+) {
     val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var eventToDelete by rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
+
+    if (showDeleteDialog && eventToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Confirm Delete") },
+            text = { Text("Are you sure you want to delete this event? This cannot be undone.") },
+            confirmButton = {
+                Button(onClick = {
+                    view_model.delete(eventToDelete!!)
+                    showDeleteDialog = false
+                    eventToDelete = null
+                }) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     if (fuellingEvents != null) {
         fuellingEvents.forEach { event ->
             view_model.insert(event)
@@ -89,12 +119,15 @@ fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<Fu
                 )
 
                 LazyColumn {
-                    if (allFuellingEvents != null) {
-                        for (fuellingEvent in allFuellingEvents!!) {
-                            item {
-                                FuellingEventItem(fuellingEvent)
-                            }
-                        }
+//                    if (allFuellingEvents != null) {
+//                        for (fuellingEvent in allFuellingEvents!!) {
+//                            item {
+//                                FuellingEventItem(fuellingEvent)
+//                            }
+//                        }
+//                    }
+                    items(allFuellingEvents ?: listOf()) { event ->
+                        FuellingEventItem(event = event, view_model = view_model)
                     }
                     Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
                     Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
@@ -122,7 +155,10 @@ fun TimelineScreen(navController: NavController? = null, fuellingEvents: List<Fu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FuellingEventItem(event: FuellingEvent) {
+fun FuellingEventItem(
+    event: FuellingEvent,
+    view_model: FuellingEventViewModel,
+) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -202,7 +238,11 @@ fun FuellingEventItem(event: FuellingEvent) {
                     Text("Edit")
                 }
                 Button(
-                    onClick = { onDelete() },
+                    onClick = {
+                        view_model.delete(event)
+                        Log.d("TimelineScreen", "Deleted event: ${event.id}")
+                        showBottomSheet = false
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
@@ -227,10 +267,12 @@ fun onShare() {
     // Implement the share functionality
 }
 
-fun onDelete() {
-    TODO("Not yet implemented")
-    // Implement the delete functionality
-}
+//fun onDelete(event: FuellingEvent, viewModel: FuellingEventViewModel) {
+//    TODO("Not yet implemented")
+//    // Implement the delete functionality
+//    viewModel.delete(event) // Call the delete method of the ViewModel
+//    Log.d("TimelineScreen", "Deleted event: ${event.id}")
+//}
 
 fun onEdit() {
     TODO("Not yet implemented")

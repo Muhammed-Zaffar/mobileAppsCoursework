@@ -57,30 +57,9 @@ fun Main(fuellingEventViewModel: FuellingEventViewModel? = null) {
             CalculatorScreen(nav)
         }
         composable("timeline") {
-
+            val view_model = viewModel(modelClass = FuellingEventViewModel::class.java)
             TimelineScreen(
-                nav, listOf()
-//                    FuellingEvent(
-//                        date = "02/05/2024",
-//                        mileage = 75000,
-//                        fuelStation = "Costco - Leicester",
-//                        fuelType = "Regular Unleaded (E10)",
-//                        litres = 36.60,
-//                        price = 1.419,
-//                        totalCost = 51.94,
-//                        imageUri = listOf()
-//                    ),
-//                    FuellingEvent(
-//                        date = "23/03/2024",
-//                        mileage = 74000,
-//                        fuelStation = "Costco - Leicester",
-//                        fuelType = "Premium Unleaded (E5)",
-//                        litres = 44.22,
-//                        price = 1.489,
-//                        totalCost = 65.84,
-//                        imageUri = listOf()
-//                    )
-//                )
+                nav, listOf(), view_model
             )
 
         }
