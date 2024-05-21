@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import com.example.myapplication.data.FuellingEvent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -66,6 +67,13 @@ fun Main(fuellingEventViewModel: FuellingEventViewModel? = null) {
         composable("addEvent") {
             val view_model = viewModel(modelClass = FuellingEventViewModel::class.java)
             AddEventScreen(nav, view_model)
+        }
+        composable("editEvent/{event.id}") {
+            val view_model = viewModel(modelClass = FuellingEventViewModel::class.java)
+            val eventID = it.arguments?.getString("event.id")
+            val ID = eventID?.toInt() ?: 0
+            EditEventScreen(nav, view_model, ID)
+
         }
         // Add more composable routes as needed
     }

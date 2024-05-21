@@ -50,8 +50,8 @@ fun TimelineScreen(
     view_model: FuellingEventViewModel = viewModel()
 ) {
     val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
-    var showDeleteDialog = rememberSaveable { mutableStateOf(false) }
-    var eventToDelete = rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
+    val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
+    val eventToDelete = rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
 
     if (showDeleteDialog.value && eventToDelete.value != null) {
         AlertDialog(
@@ -79,9 +79,7 @@ fun TimelineScreen(
     if (fuellingEvents != null) {
         fuellingEvents.forEach { event ->
             view_model.insert(event)
-//            Log.d("TimelineScreen", "Inserted ${event.date}")
         }
-//        Log.d("TimelineScreen", "Inserted ${fuellingEvents.size} events")
     }
 
     Scaffold(floatingActionButton = {
@@ -117,7 +115,7 @@ fun TimelineScreen(
 //                        }
 //                    }
                     items(allFuellingEvents ?: listOf()) { event ->
-                        FuellingEventItem(event = event, view_model = view_model, showDeleteDialog, eventToDelete)
+                        FuellingEventItem(navController, event, view_model, showDeleteDialog, eventToDelete)
                     }
                     Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
                     Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
@@ -146,6 +144,7 @@ fun TimelineScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FuellingEventItem(
+    navController: NavController?,
     event: FuellingEvent,
     view_model: FuellingEventViewModel,
     showDeleteDialog: MutableState<Boolean>,
@@ -220,7 +219,7 @@ fun FuellingEventItem(
             // Sheet content
             Column(modifier = Modifier.padding(16.dp)) {
                 Button(
-                    onClick = {  },
+                    onClick = { navController?.navigate("editEvent/${event.id}") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
