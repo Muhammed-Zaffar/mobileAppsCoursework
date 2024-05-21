@@ -6,7 +6,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -38,10 +38,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -54,16 +55,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditEventScreen(navController: NavController? = null, view_model: FuellingEventViewModel = viewModel(), eventID: Int) {
+    val errorIconPainter: Painter = rememberVectorPainter(image = Icons.Filled.Warning)
     val eventGrabbed = view_model.getFuellingEvent(eventID)
     val event by eventGrabbed.observeAsState()
 
@@ -85,9 +86,24 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
     var imageUri by rememberSaveable { mutableStateOf<List<Uri>>(listOf()) }
 
     // Activity result launcher for picking images
-    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uri: List<@JvmSuppressWildcards Uri> ->
-        imageUri = uri
-        Log.d("ImagePickerIcon", "Image URI: $uri")
+    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<@JvmSuppressWildcards Uri> ->
+        if (uris.isNotEmpty()) {
+            val contentResolver = context.contentResolver
+            for (uri in uris) {
+                try {
+                    // Take persistable URI permission to access the content URI across reboots
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(
+                        uri,
+                        takeFlags
+                    )
+                } catch (e: Exception) {
+                    Log.e("ImagePickerIcon", "Failed to take persistable URI permissions", e)
+                }
+            }
+            imageUri = uris
+            Log.d("ImagePickerIcon", "Image URI: $uris")
+        }
     }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -152,7 +168,7 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Add a new event",
+                        text = "Edit event",
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Justify,
                         fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
@@ -189,11 +205,6 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
                                     modifier = Modifier
                                         .clickable {
                                             showDatePicker(context, dateTimestampState)
-                                            Log.d(
-                                                "EditEventScreen",
-                                                "Date: ${dateTimestampState.value} \n" +
-                                                        "${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value))}"
-                                            ) // Log the selected date
                                         }
                                 )
                             },
@@ -438,12 +449,14 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
                             modifier = Modifier.padding(8.dp)
                         ) {
                             imageUri.forEach { uri ->
-                                Image(
-                                    painter = rememberImagePainter(uri), // using coil to load images because it caches them
+                                // using coil to load images because it caches them
+                                AsyncImage(
+                                    model = uri,  // Directly pass the URI to the AsyncImage
                                     contentDescription = "Uploaded image",
                                     modifier = Modifier
                                         .padding(4.dp)
-                                        .height(100.dp)
+                                        .height(100.dp),
+                                    error = errorIconPainter,
                                 )
                             }
                         }
@@ -484,7 +497,7 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
                             } else {
                                 Log.d(
                                     "EditEventScreen",
-                                    "Date: ${date}"
+                                    "Date: $date"
                                 ) // Log the selected date
                                 showDialog = true
                                 "Please fill all fields"
