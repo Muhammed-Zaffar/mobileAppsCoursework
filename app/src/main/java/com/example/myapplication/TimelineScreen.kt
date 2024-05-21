@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,26 +10,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -40,19 +32,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun TimelineScreen(
@@ -61,25 +50,26 @@ fun TimelineScreen(
     view_model: FuellingEventViewModel = viewModel()
 ) {
     val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
-    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    var eventToDelete by rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
+    var showDeleteDialog = rememberSaveable { mutableStateOf(false) }
+    var eventToDelete = rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
 
-    if (showDeleteDialog && eventToDelete != null) {
+    if (showDeleteDialog.value && eventToDelete.value != null) {
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
+            onDismissRequest = { showDeleteDialog.value = false },
             title = { Text("Confirm Delete") },
             text = { Text("Are you sure you want to delete this event? This cannot be undone.") },
             confirmButton = {
                 Button(onClick = {
-                    view_model.delete(eventToDelete!!)
-                    showDeleteDialog = false
-                    eventToDelete = null
+                    view_model.delete(eventToDelete.value!!)
+                    Log.d("TimelineScreen", "Deleted event: ${eventToDelete.value?.id}")
+                    showDeleteDialog.value = false
+                    eventToDelete.value = null
                 }) {
                     Text("Confirm")
                 }
             },
             dismissButton = {
-                Button(onClick = { showDeleteDialog = false }) {
+                Button(onClick = { showDeleteDialog.value = false }) {
                     Text("Cancel")
                 }
             }
@@ -127,7 +117,7 @@ fun TimelineScreen(
 //                        }
 //                    }
                     items(allFuellingEvents ?: listOf()) { event ->
-                        FuellingEventItem(event = event, view_model = view_model)
+                        FuellingEventItem(event = event, view_model = view_model, showDeleteDialog, eventToDelete)
                     }
                     Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
                     Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
@@ -158,6 +148,8 @@ fun TimelineScreen(
 fun FuellingEventItem(
     event: FuellingEvent,
     view_model: FuellingEventViewModel,
+    showDeleteDialog: MutableState<Boolean>,
+    eventToDelete: MutableState<FuellingEvent?>
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -222,15 +214,13 @@ fun FuellingEventItem(
 
     if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
+            onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
             // Sheet content
             Column(modifier = Modifier.padding(16.dp)) {
                 Button(
-                    onClick = { onEdit() },
+                    onClick = {  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
@@ -239,9 +229,11 @@ fun FuellingEventItem(
                 }
                 Button(
                     onClick = {
-                        view_model.delete(event)
-                        Log.d("TimelineScreen", "Deleted event: ${event.id}")
+//                        view_model.delete(event)
+                        eventToDelete.value = event
+                        showDeleteDialog.value = true
                         showBottomSheet = false
+//                        Log.d("TimelineScreen", "Deleted event: ${event.id}")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -250,7 +242,7 @@ fun FuellingEventItem(
                     Text("Delete")
                 }
                 Button(
-                    onClick = { onShare() },
+                    onClick = {  },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
@@ -260,54 +252,4 @@ fun FuellingEventItem(
             }
         }
     }
-}
-
-fun onShare() {
-    TODO("Not yet implemented")
-    // Implement the share functionality
-}
-
-//fun onDelete(event: FuellingEvent, viewModel: FuellingEventViewModel) {
-//    TODO("Not yet implemented")
-//    // Implement the delete functionality
-//    viewModel.delete(event) // Call the delete method of the ViewModel
-//    Log.d("TimelineScreen", "Deleted event: ${event.id}")
-//}
-
-fun onEdit() {
-    TODO("Not yet implemented")
-    // Implement the edit functionality
-}
-
-@Preview
-@Composable
-fun PreviewTimelineScreen() {
-//     Preview the TimelineScreen with dummy data
-
-//    TimelineScreen(
-//        fuellingEvents = listOf(
-//            FuellingEvent(
-//                0,
-//                "02/05/2024",
-//                75000,
-//                "Costco - Leicester",
-//                "Regular Unleaded (E10)",
-//                36.60,
-//                1.419,
-//                51.94,
-//                listOf()
-//            ),
-//            FuellingEvent(
-//                1,
-//                "23/03/2024",
-//                74950,
-//                "Costco - Leicester",
-//                "Premium Unleaded (E5)",
-//                44.22,
-//                1.489,
-//                65.84,
-//                listOf()
-//            )
-//        )
-//    )
 }

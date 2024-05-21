@@ -109,7 +109,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
     // State for the date as timestamp
-    var dateTimestamp by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
+    val dateTimestamp by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
     val dateTimestampState = rememberSaveable { mutableStateOf(dateTimestamp) }
 
     // Create a new FuellingEvent object
