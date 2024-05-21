@@ -38,6 +38,7 @@ data class FuellingEvent(
     }
 
     override fun toString(): String {
-        return "Date: $date\nMileage: $mileage\nFuel Station: $fuelStation\nFuel Type: $fuelType\nLitres: $litres\nPrice: $price\nTotal Cost: $totalCost"
+        return "Hey! I'm sending you a fuelling event from Zaffar's Fuel Tracker:\n\n" +
+                "Date: $date\nMileage: $mileage\nFuel Station: $fuelStation\nFuel Type: $fuelType\nLitres: $litres\nPrice: $price\nTotal Cost: $totalCost"
     }
 }
