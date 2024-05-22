@@ -65,7 +65,7 @@ import java.util.Locale
 @Composable
 fun EditEventScreen(navController: NavController? = null, view_model: FuellingEventViewModel = viewModel(), eventID: Int) {
     val errorIconPainter: Painter = rememberVectorPainter(image = Icons.Filled.Warning)
-    val eventGrabbed = view_model.getFuellingEvent(eventID)
+    val eventGrabbed = view_model.getFuellingEventByID(eventID)
     val event by eventGrabbed.observeAsState()
 
     val context = LocalContext.current

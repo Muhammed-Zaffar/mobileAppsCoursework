@@ -23,6 +23,5 @@ interface FuellingEventDAO {
     fun getAllFuellingEvents(): LiveData<List<FuellingEvent>>
 
     @Query("SELECT * FROM fuelling_events WHERE id = :id")
-    fun getFuellingEvent(id: Int): LiveData<FuellingEvent>
-
+    fun getFuellingEventByID(id: Int): LiveData<FuellingEvent>
 }

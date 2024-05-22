@@ -13,7 +13,7 @@ class FuellingEventRepository(private val FuellingEventDAO: FuellingEventDAO) {
     suspend fun delete(fuellingEvent: FuellingEvent) {
         FuellingEventDAO.delete(fuellingEvent)
     }
-    fun getFuellingEvent(id: Int): LiveData<FuellingEvent> {
-        return FuellingEventDAO.getFuellingEvent(id)
+    fun getFuellingEventByID(id: Int): LiveData<FuellingEvent> {
+        return FuellingEventDAO.getFuellingEventByID(id)
     }
 }

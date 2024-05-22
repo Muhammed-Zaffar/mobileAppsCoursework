@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.collectAsState
 
 class FuellingEventViewModel(application: Application): AndroidViewModel(application) {
     private val repository: FuellingEventRepository
@@ -35,8 +34,8 @@ class FuellingEventViewModel(application: Application): AndroidViewModel(applica
         repository.delete(fuellingEvent)
     }
 
-    fun getFuellingEvent(id: Int): LiveData<FuellingEvent> {
-        return repository.getFuellingEvent(id)
+    fun getFuellingEventByID(id: Int): LiveData<FuellingEvent> {
+        return repository.getFuellingEventByID(id)
     }
 
 }
