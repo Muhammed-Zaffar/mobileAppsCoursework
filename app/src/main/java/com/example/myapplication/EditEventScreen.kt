@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,6 +28,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -139,20 +142,42 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
 
     Scaffold(
         bottomBar = {
-            // Add a bottom bar if needed
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(onClick = { navController?.navigate("calculator") }) {
-                    Text("Go to calculator")
-                }
-                Button(onClick = { navController?.navigate("timeline") }) {
-                    Text("Go to timeline")
-                }
+            NavigationBar {
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.calculator_nav_icon),
+                            contentDescription = "calculator",
+                            modifier = Modifier
+                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                                .size(28.dp)
+                        )
+                    },
+                    label = { Text("calculator") },
+                    selected = false,
+                    onClick = {
+                        navController?.navigate("calculator")
+                    },
+                )
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.timeline_nav_icon),
+                            contentDescription = "timeline",
+                            modifier = Modifier
+                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                                .size(28.dp)
+                        )
+                    },
+                    label = { Text("timeline") },
+                    selected = true,
+                    onClick = {
+                        navController?.navigate("timeline")
+                    },
+                )
             }
         },
+
         content = { paddingValues ->
             val scrollState = rememberScrollState()
             Column(

@@ -76,5 +76,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0") // If using LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // For ViewModel utilities in Compose
     implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
-
+    implementation("androidx.compose.material:material-icons-extended")
 }

@@ -9,16 +9,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,15 +41,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
+import java.util.Arrays
 
 @Composable
 fun TimelineScreen(
@@ -54,6 +61,12 @@ fun TimelineScreen(
     val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
     val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
     val eventToDelete = rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
+
+    var selectedItem by remember { mutableStateOf(0) }
+    val navItems = listOf(
+        listOf("Calculator", R.drawable.calculator_nav_icon),
+        listOf("Timeline", R.drawable.timeline_nav_icon)
+    )
 
     if (showDeleteDialog.value && eventToDelete.value != null) {
         AlertDialog(
@@ -84,15 +97,16 @@ fun TimelineScreen(
         }
     }
 
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(
-            onClick = {
-                navController?.navigate("addEvent")
-            },
-            content = {
-                Text("+", style = MaterialTheme.typography.bodyMedium)
-            })
-    },
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController?.navigate("addEvent")
+                },
+                content = {
+                    Text("+", style = MaterialTheme.typography.bodyMedium)
+                })
+        },
         floatingActionButtonPosition = FabPosition.End,
         content = { paddingValues ->  // Add this content lambda parameter
             Column(
@@ -109,15 +123,14 @@ fun TimelineScreen(
                 )
 
                 LazyColumn {
-//                    if (allFuellingEvents != null) {
-//                        for (fuellingEvent in allFuellingEvents!!) {
-//                            item {
-//                                FuellingEventItem(fuellingEvent)
-//                            }
-//                        }
-//                    }
                     items(allFuellingEvents ?: listOf()) { event ->
-                        FuellingEventItem(navController, event, view_model, showDeleteDialog, eventToDelete)
+                        FuellingEventItem(
+                            navController,
+                            event,
+                            view_model,
+                            showDeleteDialog,
+                            eventToDelete
+                        )
                     }
                     Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
                     Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
@@ -125,22 +138,42 @@ fun TimelineScreen(
             }
         },
         bottomBar = {
-            // Add a bottom bar if needed
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(onClick = { navController?.navigate("calculator") }) {
-                    Text("Go to calculator")
-                }
-                Button(onClick = { navController?.navigate("timeline") }) {
-                    Text("Go to timeline")
-                }
+            NavigationBar {
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.calculator_nav_icon),
+                            contentDescription = "calculator",
+                            modifier = Modifier
+                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                                .size(28.dp)
+                        )
+                    },
+                    label = { Text("calculator") },
+                    selected = false,
+                    onClick = {
+                        navController?.navigate("calculator")
+                    },
+                )
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.timeline_nav_icon),
+                            contentDescription = "timeline",
+                            modifier = Modifier
+                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                                .size(28.dp)
+                        )
+                    },
+                    label = { Text("timeline") },
+                    selected = true,
+                    onClick = {
+                        navController?.navigate("timeline")
+                    },
+                )
             }
-        }
-
-    )
+        },
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -181,36 +214,97 @@ fun FuellingEventItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Date: ${event.date}",
+                    text = "${event.date}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                 )
                 Text(
-                    text = "Total Cost: £${event.formatDouble(event.totalCost)}",
+                    text = "£${event.formatDouble(event.totalCost)}",
                     fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
                 )
             }
-            Text(
-                text = "Mileage: ${event.mileage}",
-                textAlign = TextAlign.Right,
-                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-            )
-            Text(
-                text = "Fuel Station: ${event.fuelStation}",
-                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-            )
-            Text(
-                text = "Litres: ${event.formatDouble(event.litres)}",
-                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-            )
-            Text(
-                text = "Price: ${event.formatDouble3(event.price)}",
-                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-            )
-            Text(
-                text = "Fuel Type: ${event.fuelType}",
-                fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.speedometer_icon),
+                    contentDescription = "Mileage icon",
+                    modifier = Modifier
+                        .padding(start = 2.dp, end = 5.dp, top = 2.dp, bottom = 2.dp)
+                        .size(20.dp)
+                )
+                Text(
+                    text = "${event.mileage} miles",
+                    textAlign = TextAlign.Right,
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.location_icon),
+                    contentDescription = "Fuel station icon",
+                    modifier = Modifier
+                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                        .size(19.dp)
+                )
+                Text(
+                    text = "${event.fuelStation}",
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.jerry_can_icon),
+                    contentDescription = "Fuel icon",
+                    modifier = Modifier
+                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                        .size(19.dp)
+                )
+                Text(
+                    text = "${event.formatDouble(event.litres)} litres",
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+//                    painter = painterResource(id = R.drawable.price_tag_icon),
+                    imageVector = Icons.Outlined.Label,
+                    contentDescription = "Price icon",
+                    modifier = Modifier
+                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                        .size(20.dp)
+                )
+                Text(
+                    text = "£${event.formatDouble3(event.price)} per litre",
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.pump_handle_icon),
+                    contentDescription = "Fuel type icon",
+                    modifier = Modifier
+                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
+                        .size(20.dp)
+                )
+                Text(
+                    text = "${event.fuelType}",
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
+            }
         }
     }
 
