@@ -20,9 +20,8 @@ private val DarkColorScheme = darkColorScheme(
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
-
 private val LightColorScheme = lightColorScheme(
-//    primary = Color(0xFF593B99),
+//    primary = Purple40,
 //    secondary = PurpleGrey40,
 //    tertiary = Pink40,
     secondary = Color(0xFF4CAF50),
@@ -43,6 +42,22 @@ private val CustomLightColorScheme1 = lightColorScheme(
     error = Color(0xFFB00020),
     onError = Color.White
 )
+//0xFF7355B2
+private val CustomDarkColorScheme1 = darkColorScheme(
+    primary = Color(0xFF312153),
+    onPrimary = Color(0xFF794BCA),
+    secondary = Color(0xFF312153),
+    onSecondary = Color.Black,
+    background = Color(0xFF1E1F22),
+    onBackground = Color.White,
+    surface = Color(0xFF2B2D30),
+    onSurface = Color.White,
+    error = Color(0xFFCF6679),
+    onError = Color.Black
+)
+//FF312153
+//FF331D5A
+
 private val CustomLightColorScheme2 = lightColorScheme(
     primary = Purple80,
     onPrimary = Color.White,
@@ -54,19 +69,6 @@ private val CustomLightColorScheme2 = lightColorScheme(
     onSurface = Color.Black,
     error = Color(0xFFB00020),
     onError = Color.White
-)
-
-private val CustomDarkColorScheme1 = darkColorScheme(
-    primary = Color(0xFF7355B2),
-    onPrimary = Color.Black,
-    secondary = Color(0xFF7355B2),
-    onSecondary = Color.Black,
-    background = Color(0xFF121212),
-    onBackground = Color.White,
-    surface = Color(0xFF121212),
-    onSurface = Color.White,
-    error = Color(0xFFCF6679),
-    onError = Color.Black
 )
 private val CustomDarkColorScheme2 = darkColorScheme(
     primary = Purple80,

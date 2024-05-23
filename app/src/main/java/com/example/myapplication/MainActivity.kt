@@ -8,12 +8,17 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.myapplication.data.FuellingEventViewModel
+import com.example.myapplication.ui.theme.AppThemeManager
+import com.example.myapplication.ui.theme.LocalAppTheme
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 
@@ -21,12 +26,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme{
-                Main()
+            val appThemeManager = remember { AppThemeManager(applicationContext) }
+            MyApplicationTheme(appThemeManager.isDarkTheme.value) {
+                ProvideAppThemeManager(appThemeManager) {
+                    Main()
+                }
             }
         }
     }
 }
+
+@Composable
+fun ProvideAppThemeManager(appThemeManager: AppThemeManager, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAppTheme provides appThemeManager) {
+        content()
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.myapplication.data.FuellingEvent
+import com.example.myapplication.ui.theme.LocalAppTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +62,8 @@ import com.example.myapplication.data.FuellingEvent
 fun SimpleTopAppBar(title: String, navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: "Unknown"
+    val appThemeManager = LocalAppTheme.current
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -107,9 +111,9 @@ fun SimpleTopAppBar(title: String, navController: NavController) {
             }
         },
         actions = {
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(onClick = { appThemeManager.toggleTheme() }) {
                 Icon(
-                    imageVector = Icons.Outlined.DarkMode,
+                    imageVector = if (appThemeManager.isDarkTheme.value) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
                     contentDescription = "Switch to dark mode",
                     tint = Color.White
                 )

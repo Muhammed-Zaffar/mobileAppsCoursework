@@ -32,13 +32,13 @@ fun BottomBar(navController: NavController) {
         NavigationBarItem(
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.primary,
-                selectedTextColor = Color.White,
-                indicatorColor = Color.White,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-                disabledIconColor = Color.White,
-                disabledTextColor = Color.White,
-                ),
+                selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                indicatorColor = MaterialTheme.colorScheme.onPrimary,
+                unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                disabledIconColor = MaterialTheme.colorScheme.onPrimary,
+                disabledTextColor = MaterialTheme.colorScheme.onPrimary,
+            ),
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.calculator_nav_icon),
@@ -56,12 +56,12 @@ fun BottomBar(navController: NavController) {
         NavigationBarItem(
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.primary,
-                selectedTextColor = Color.White,
-                indicatorColor = Color.White,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-                disabledIconColor = Color.White,
-                disabledTextColor = Color.White,
+                selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                indicatorColor = MaterialTheme.colorScheme.onPrimary,
+                unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                disabledIconColor = MaterialTheme.colorScheme.onPrimary,
+                disabledTextColor = MaterialTheme.colorScheme.onPrimary,
             ),
             icon = {
                 Icon(
