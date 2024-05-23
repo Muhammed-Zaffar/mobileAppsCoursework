@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -58,6 +61,9 @@ fun SimpleTopAppBar(title: String, navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: "Unknown"
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+        ),
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -67,14 +73,15 @@ fun SimpleTopAppBar(title: String, navController: NavController) {
                     painter = painterResource(id = R.drawable.pump_icon),
                     contentDescription = "Title: Fuel Tracker",
                     modifier = Modifier
-//                        .padding(start = 8.dp, end = 8.dp)
-                        .size(32.dp)
+                        .size(32.dp),
+                    tint = Color.White
                 )
                 Text(
                     text = "Fuel Tracker",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght)),
+                    color = Color.White
                 )
             }
         },
@@ -94,15 +101,17 @@ fun SimpleTopAppBar(title: String, navController: NavController) {
             }) {
                 Icon(
                     imageVector = Icons.Outlined.ArrowBack,
-                    contentDescription = "Return to previous screen"
+                    contentDescription = "Return to previous screen",
+                    tint = Color.White
                 )
             }
         },
         actions = {
             IconButton(onClick = { /* doSomething() */ }) {
                 Icon(
-                    imageVector = Icons.Filled.Favorite,
-                    contentDescription = "Localized description"
+                    imageVector = Icons.Outlined.DarkMode,
+                    contentDescription = "Switch to dark mode",
+                    tint = Color.White
                 )
             }
         }

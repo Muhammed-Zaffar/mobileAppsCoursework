@@ -26,9 +26,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.AddAPhoto
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -183,6 +186,10 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
                 ) {
                     // Add a form to add a new event
                     Column(
@@ -206,7 +213,7 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                 )
                             },
                             trailingIcon = {
-                                Icon(Icons.Filled.DateRange, contentDescription = "Select Date",
+                                Icon(Icons.Outlined.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
                                             showDatePicker(context, dateTimestampState)
@@ -275,7 +282,7 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                 }),
                                 trailingIcon = {
                                     Icon(
-                                        Icons.Filled.LocationOn,
+                                        Icons.Outlined.LocationOn,
                                         contentDescription = "Location",
                                         modifier = Modifier
                                             .clickable {
@@ -425,7 +432,6 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                             },
                             trailingIcon = {
                                 Icon(
-//                                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
                                     imageVector = Icons.Outlined.AddAPhoto,
                                     contentDescription = "Upload pictures",
                                     modifier = Modifier

@@ -4,16 +4,20 @@ import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import okhttp3.internal.wait
 
 
 @Composable
@@ -21,18 +25,25 @@ fun BottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: "Unknown"
     val isCalculatorSelected = currentRoute == "calculator"
-    val isTimelineSelected = currentRoute == "timeline"
-    val isSettingsSelected = currentRoute == "settings"
-    Log.d("BottomBar", "Current route: $currentRoute")
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.primary,
+    ) {
         NavigationBarItem(
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = Color.White,
+                indicatorColor = Color.White,
+                unselectedIconColor = Color.White,
+                unselectedTextColor = Color.White,
+                disabledIconColor = Color.White,
+                disabledTextColor = Color.White,
+                ),
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.calculator_nav_icon),
                     contentDescription = "calculator",
                     modifier = Modifier
-                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
                         .size(28.dp)
                 )
             },
@@ -43,12 +54,20 @@ fun BottomBar(navController: NavController) {
             },
         )
         NavigationBarItem(
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = Color.White,
+                indicatorColor = Color.White,
+                unselectedIconColor = Color.White,
+                unselectedTextColor = Color.White,
+                disabledIconColor = Color.White,
+                disabledTextColor = Color.White,
+            ),
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.timeline_nav_icon),
                     contentDescription = "timeline",
                     modifier = Modifier
-                        .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
                         .size(28.dp)
                 )
             },

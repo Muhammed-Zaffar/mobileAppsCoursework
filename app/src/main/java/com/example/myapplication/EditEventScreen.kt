@@ -23,9 +23,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.AddAPhoto
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -148,13 +152,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)  // Use paddingValues provided by the Scaffold
+                    .padding(paddingValues)
                     .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),  // Additional padding can be added as needed
+                        .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -169,6 +173,10 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
                 ) {
                     // Add a form to add a new event
                     Column(
@@ -191,7 +199,7 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                 )
                             },
                             trailingIcon = {
-                                Icon(Icons.Filled.DateRange, contentDescription = "Select Date",
+                                Icon(Icons.Outlined.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
                                             showDatePicker(context, dateTimestampState)
@@ -255,7 +263,7 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                 }),
                                 trailingIcon = {
                                     Icon(
-                                        Icons.Filled.LocationOn,
+                                        Icons.Outlined.LocationOn,
                                         contentDescription = "Location",
                                         modifier = Modifier
                                             .clickable {
@@ -405,7 +413,7 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                             },
                             trailingIcon = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                    imageVector = Icons.Outlined.AddAPhoto,
                                     contentDescription = "Upload pictures",
                                     modifier = Modifier
                                         .padding(10.dp)
@@ -482,7 +490,7 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                 )
                                 // add the event to the list then sync with database
                                 Log.d("EditEventScreen", "imageUri: ${imageUri::class.java.typeName}")
-                                navController?.popBackStack()
+                                navController.popBackStack()
                                 "Event updated successfully"
                             } else {
                                 Log.d(

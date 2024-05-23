@@ -14,14 +14,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Label
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -38,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -94,6 +100,7 @@ fun TimelineScreen(
         topBar = { SimpleTopAppBar(title = "Fuel Timeline", navController = navController) },
         floatingActionButton = {
             FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.primary,
                 onClick = {
                     navController.navigate("addEvent")
                 },
@@ -102,7 +109,8 @@ fun TimelineScreen(
                     Icon(
                         imageVector = Icons.Outlined.Add,
                         contentDescription = "Add event",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.White
                     )
                 })
         },
@@ -154,6 +162,10 @@ fun FuellingEventItem(
     val context = LocalContext.current
 
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -277,15 +289,21 @@ fun FuellingEventItem(
         ) {
             // Sheet content
             Column(modifier = Modifier.padding(16.dp)) {
-                Button(
+                IconButton(
                     onClick = { navController?.navigate("editEvent/${event.id}") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp)
+                        .padding(bottom = 8.dp),
                 ) {
-                    Text("Edit")
+                    Row {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "Edit event"
+                        )
+                        Text("Edit")
+                    }
                 }
-                Button(
+                IconButton(
                     onClick = {
 //                        view_model.delete(event)
                         eventToDelete.value = event
@@ -297,9 +315,15 @@ fun FuellingEventItem(
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
                 ) {
-                    Text("Delete")
+                    Row {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Share event"
+                        )
+                        Text("Delete")
+                    }
                 }
-                Button(
+                IconButton(
                     onClick = {
                         val sendIntent = Intent().apply {
                             action = Intent.ACTION_SEND
@@ -313,7 +337,13 @@ fun FuellingEventItem(
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
                 ) {
-                    Text("Share")
+                    Row {
+                        Icon(
+                            imageVector = Icons.Outlined.Share,
+                            contentDescription = "Share event"
+                        )
+                        Text("Share")
+                    }
                 }
             }
         }
