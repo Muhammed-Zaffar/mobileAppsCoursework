@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -23,8 +24,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,23 +49,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
-import java.util.Arrays
 
 @Composable
 fun TimelineScreen(
-    navController: NavController? = null,
+    navController: NavController,
     fuellingEvents: List<FuellingEvent>?,
     view_model: FuellingEventViewModel = viewModel()
 ) {
     val allFuellingEvents by view_model.allFuellingEvents.observeAsState()
     val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
     val eventToDelete = rememberSaveable { mutableStateOf<FuellingEvent?>(null) }
-
-    var selectedItem by remember { mutableStateOf(0) }
-    val navItems = listOf(
-        listOf("Calculator", R.drawable.calculator_nav_icon),
-        listOf("Timeline", R.drawable.timeline_nav_icon)
-    )
 
     if (showDeleteDialog.value && eventToDelete.value != null) {
         AlertDialog(
@@ -98,13 +90,20 @@ fun TimelineScreen(
     }
 
     Scaffold(
+        bottomBar = { BottomBar(navController = navController) },
+        topBar = { SimpleTopAppBar(title = "Fuel Timeline", navController = navController) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController?.navigate("addEvent")
+                    navController.navigate("addEvent")
                 },
                 content = {
-                    Text("+", style = MaterialTheme.typography.bodyMedium)
+//                    Text("+", style = MaterialTheme.typography.bodyMedium)
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "Add event",
+                        modifier = Modifier.size(32.dp)
+                    )
                 })
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -135,42 +134,6 @@ fun TimelineScreen(
                     Log.d("TimelineScreen", "allFuellingEvents: ${allFuellingEvents}")
                     Log.d("TimelineScreen", "allFuellingEvents.size: ${allFuellingEvents?.size}")
                 }
-            }
-        },
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calculator_nav_icon),
-                            contentDescription = "calculator",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("calculator") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("calculator")
-                    },
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.timeline_nav_icon),
-                            contentDescription = "timeline",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("timeline") },
-                    selected = true,
-                    onClick = {
-                        navController?.navigate("timeline")
-                    },
-                )
             }
         },
         )
@@ -277,7 +240,6 @@ fun FuellingEventItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-//                    painter = painterResource(id = R.drawable.price_tag_icon),
                     imageVector = Icons.Outlined.Label,
                     contentDescription = "Price icon",
                     modifier = Modifier

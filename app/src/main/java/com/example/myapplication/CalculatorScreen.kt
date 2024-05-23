@@ -42,7 +42,7 @@ import androidx.navigation.NavController
 import com.example.myapplication.data.FuellingEvent
 
 @Composable
-fun CalculatorScreen(navController: NavController? = null) {
+fun CalculatorScreen(navController: NavController) {
     // State variables to store input values
     var distance by remember { mutableStateOf("") }
     var fuelPrice by remember { mutableStateOf("") }
@@ -58,42 +58,8 @@ fun CalculatorScreen(navController: NavController? = null) {
 
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calculator_nav_icon),
-                            contentDescription = "calculator",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("calculator") },
-                    selected = true,
-                    onClick = {
-                        navController?.navigate("calculator")
-                    },
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.timeline_nav_icon),
-                            contentDescription = "timeline",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("timeline") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("timeline")
-                    },
-                )
-            }
-        },
+        bottomBar = { BottomBar(navController = navController) },
+        topBar = { SimpleTopAppBar(title = "Trip calculator", navController = navController) },
         content = { paddingValues ->
             Column(
                 modifier = Modifier
@@ -101,20 +67,12 @@ fun CalculatorScreen(navController: NavController? = null) {
                     .padding(paddingValues)
                     .padding(16.dp),
             ) {
-                Card(
-                    modifier = Modifier
-                        .padding(vertical = 8.dp),
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Calculate the cost of a trip",
-                            style = MaterialTheme.typography.headlineLarge,
-                            textAlign = TextAlign.Center,
-                            fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-                        )
-                    }
-                }
-
+                Text(
+                    text = "Trip Calculator",
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                )
 
                 Card(
                     modifier = Modifier
@@ -205,7 +163,10 @@ fun CalculatorScreen(navController: NavController? = null) {
                                     .padding(start = 10.dp, bottom = 10.dp)
                                     .fillMaxWidth(0.75f)
                                     .focusRequester(fuelConsumptionFocusRequester),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                ),
                                 keyboardActions = KeyboardActions(onDone = {
                                     fuelConsumptionFocusRequester.freeFocus()
                                     keyboardController?.hide()

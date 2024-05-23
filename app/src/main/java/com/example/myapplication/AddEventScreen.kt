@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -62,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
@@ -107,7 +109,7 @@ fun showDatePicker(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AddEventScreen(navController: NavController? = null, view_model: FuellingEventViewModel = viewModel()) {
+fun AddEventScreen(navController: NavController, view_model: FuellingEventViewModel = viewModel()) {
     val context = LocalContext.current
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -153,43 +155,8 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
 
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calculator_nav_icon),
-                            contentDescription = "calculator",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("calculator") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("calculator")
-                    },
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.timeline_nav_icon),
-                            contentDescription = "timeline",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("timeline") },
-                    selected = true,
-                    onClick = {
-                        navController?.navigate("timeline")
-                    },
-                )
-            }
-        },
-
+        bottomBar = { BottomBar(navController = navController) },
+        topBar = { SimpleTopAppBar(title = "Add a new event", navController = navController) },
         content = { paddingValues ->
             val scrollState = rememberScrollState()
             Column(
@@ -246,7 +213,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                                             Log.d(
                                                 "AddEventScreen",
                                                 "Date: ${dateTimestampState.value} \n" +
-                                                        "${SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value))}"
+                                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value))
                                             ) // Log the selected date
                                         }
                                 )
@@ -458,7 +425,8 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                             },
                             trailingIcon = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+//                                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                                    imageVector = Icons.Outlined.AddAPhoto,
                                     contentDescription = "Upload pictures",
                                     modifier = Modifier
                                         .padding(10.dp)
@@ -493,7 +461,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                         ) {
                             imageUri.forEach { uri ->
                                 Image(
-                                    painter = rememberImagePainter(uri), // using coil to load images because it caches them
+                                    painter = rememberAsyncImagePainter(uri), // using coil to load images because it caches them
                                     contentDescription = "Uploaded image",
                                     modifier = Modifier
                                         .padding(4.dp)
@@ -532,7 +500,7 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
                                 )
                                 // add the event to the list then sync with database
                                 Log.d("AddEventScreen", "imageUri: ${imageUri::class.java.typeName}")
-                                navController?.popBackStack()
+                                navController.popBackStack()
                                 "Event added successfully"
                             } else {
                                 Log.d(
@@ -573,10 +541,4 @@ fun AddEventScreen(navController: NavController? = null, view_model: FuellingEve
 
             }
         })
-}
-
-@Preview
-@Composable
-fun PreviewAddEventScreen() {
-    AddEventScreen()
 }

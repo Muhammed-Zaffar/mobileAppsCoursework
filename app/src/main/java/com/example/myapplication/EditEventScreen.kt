@@ -66,7 +66,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EditEventScreen(navController: NavController? = null, view_model: FuellingEventViewModel = viewModel(), eventID: Int) {
+fun EditEventScreen(navController: NavController, view_model: FuellingEventViewModel = viewModel(), eventID: Int) {
     val errorIconPainter: Painter = rememberVectorPainter(image = Icons.Filled.Warning)
     val eventGrabbed = view_model.getFuellingEventByID(eventID)
     val event by eventGrabbed.observeAsState()
@@ -141,43 +141,8 @@ fun EditEventScreen(navController: NavController? = null, view_model: FuellingEv
 
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calculator_nav_icon),
-                            contentDescription = "calculator",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("calculator") },
-                    selected = false,
-                    onClick = {
-                        navController?.navigate("calculator")
-                    },
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.timeline_nav_icon),
-                            contentDescription = "timeline",
-                            modifier = Modifier
-                                .padding(start = 2.dp, end = 6.dp, top = 2.dp, bottom = 2.dp)
-                                .size(28.dp)
-                        )
-                    },
-                    label = { Text("timeline") },
-                    selected = true,
-                    onClick = {
-                        navController?.navigate("timeline")
-                    },
-                )
-            }
-        },
-
+        bottomBar = { BottomBar(navController = navController) },
+        topBar = { SimpleTopAppBar(title = "Edit event", navController = navController) },
         content = { paddingValues ->
             val scrollState = rememberScrollState()
             Column(
