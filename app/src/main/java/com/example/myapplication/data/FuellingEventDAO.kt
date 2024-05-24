@@ -1,5 +1,11 @@
 package com.example.myapplication.data
 
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
+import android.content.UriMatcher
+import android.database.Cursor
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.room.Delete
 import androidx.room.Insert
@@ -24,4 +30,10 @@ interface FuellingEventDAO {
 
     @Query("SELECT * FROM fuelling_events WHERE id = :id")
     fun getFuellingEventByID(id: Int): LiveData<FuellingEvent>
+
+
+    @Query("SELECT * FROM fuelling_events ORDER BY date DESC")
+    fun getAllFuellingEventsCursor(): Cursor
+    @Query("SELECT * FROM fuelling_events WHERE id = :id")
+    fun getFuellingEventByIDCursor(id: Int): Cursor
 }
