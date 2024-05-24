@@ -14,8 +14,8 @@ class FuellingEventContentProvider : ContentProvider() {
         private const val EVENT_ID = 101
 
         private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
-            addURI("com.example.myapplication.fuellingeventprovider", "events", EVENTS)
-            addURI("com.example.myapplication.fuellingeventprovider", "events/#", EVENT_ID)
+            addURI(FuellingEventContract.AUTHORITY, FuellingEventContract.FuellingEvents.PATH_FUELLING_EVENTS, EVENTS)
+            addURI(FuellingEventContract.AUTHORITY, "${FuellingEventContract.FuellingEvents.PATH_FUELLING_EVENTS}/#", EVENT_ID)
         }
     }
 
@@ -86,8 +86,8 @@ class FuellingEventContentProvider : ContentProvider() {
         // Q: what is this function for? A: This function is used to return the MIME type of the data at the given URI.
         // Q: what is the MIME type? A: MIME type is a standard way to describe the format of a file. It stands for Multipurpose Internet Mail Extensions.
         return when (uriMatcher.match(uri)) {
-            EVENTS -> "vnd.android.cursor.dir/vnd.com.example.myapplication.fuellingeventprovider.events"
-            EVENT_ID -> "vnd.android.cursor.item/vnd.com.example.myapplication.fuellingeventprovider.events"
+            EVENTS -> FuellingEventContract.FuellingEvents.CONTENT_TYPE
+            EVENT_ID -> FuellingEventContract.FuellingEvents.CONTENT_ITEM_TYPE
             else -> throw IllegalArgumentException("Unknown URI: $uri")
         }
     }

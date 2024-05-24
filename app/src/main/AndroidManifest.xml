@@ -49,6 +49,16 @@
             android:name=".data.FuellingEventContentProvider"
             android:authorities="com.example.myapplication.fuellingeventprovider"
             android:exported="false" />
+
+        <service
+            android:name=".FuellingEventsWidgetService"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+            <intent-filter>
+                <action android:name="android.widget.RemoteViewsService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
