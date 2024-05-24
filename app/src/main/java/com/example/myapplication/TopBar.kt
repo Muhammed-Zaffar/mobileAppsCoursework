@@ -71,13 +71,14 @@ fun SimpleTopAppBar(title: String, navController: NavController) {
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.pump_icon),
                     contentDescription = "Title: Fuel Tracker",
                     modifier = Modifier
-                        .size(32.dp),
+                        .size(32.dp)
+                        .padding(end = 8.dp),
                     tint = Color.White
                 )
                 Text(

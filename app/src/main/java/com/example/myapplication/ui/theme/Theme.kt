@@ -15,21 +15,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-private val LightColorScheme = lightColorScheme(
-//    primary = Purple40,
-//    secondary = PurpleGrey40,
-//    tertiary = Pink40,
-    secondary = Color(0xFF4CAF50),
-    background = Color(0xFFFFFFFF),       // Light gray for background
-    surface = Color(0xFFD9D9D9),          // White for cards
-    primary = Color(0xFF7355B2),
-)
-
 private val CustomLightColorScheme1 = lightColorScheme(
     primary = Color(0xFF7355B2),
     onPrimary = Color.White,
@@ -55,8 +40,6 @@ private val CustomDarkColorScheme1 = darkColorScheme(
     error = Color(0xFFCF6679),
     onError = Color.Black
 )
-//FF312153
-//FF331D5A
 
 private val CustomLightColorScheme2 = lightColorScheme(
     primary = Purple80,
@@ -116,7 +99,7 @@ fun MyApplicationTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography, // Ensure you define this typography
+        typography = Typography,
         content = content
     )
 }

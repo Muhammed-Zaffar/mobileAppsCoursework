@@ -158,6 +158,7 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { BottomBar(navController = navController) },
         topBar = { SimpleTopAppBar(title = "Add a new event", navController = navController) },
         content = { paddingValues ->

@@ -145,6 +145,7 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { BottomBar(navController = navController) },
         topBar = { SimpleTopAppBar(title = "Edit event", navController = navController) },
         content = { paddingValues ->

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
@@ -96,6 +98,7 @@ fun TimelineScreen(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { BottomBar(navController = navController) },
         topBar = { SimpleTopAppBar(title = "Fuel Timeline", navController = navController) },
         floatingActionButton = {
@@ -122,14 +125,15 @@ fun TimelineScreen(
                     .padding(paddingValues)  // Use paddingValues provided by the Scaffold
                     .padding(16.dp)
             ) {
-                Text(
-                    text = "Fuel Timeline",
-                    style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
-                )
-
                 LazyColumn {
+                    item{
+                        Text(
+                            text = "Fuel Timeline",
+                            style = MaterialTheme.typography.headlineLarge,
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            fontFamily = FontFamily(Font(R.font.jetbrainsmono_variablefont_wght))
+                        )
+                    }
                     items(allFuellingEvents ?: listOf()) { event ->
                         FuellingEventItem(
                             navController,
@@ -144,7 +148,7 @@ fun TimelineScreen(
                 }
             }
         },
-        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
