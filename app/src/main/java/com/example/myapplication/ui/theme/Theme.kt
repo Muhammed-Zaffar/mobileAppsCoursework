@@ -25,7 +25,9 @@ private val CustomLightColorScheme1 = lightColorScheme(
     surface = Color(0xFFFFFFFF),
     onSurface = Color.Black,
     error = Color(0xFFB00020),
-    onError = Color.White
+    onError = Color.White,
+    outline = Color(0xFF7355B2),
+    outlineVariant = Color.Black
 )
 //0xFF7355B2
 private val CustomDarkColorScheme1 = darkColorScheme(
@@ -38,7 +40,9 @@ private val CustomDarkColorScheme1 = darkColorScheme(
     surface = Color(0xFF2B2D30),
     onSurface = Color.White,
     error = Color(0xFFCF6679),
-    onError = Color.Black
+    onError = Color.Black,
+    outline = Color.Gray,
+    outlineVariant = Color.Gray
 )
 
 private val CustomLightColorScheme2 = lightColorScheme(

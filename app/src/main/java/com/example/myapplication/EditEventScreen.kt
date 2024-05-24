@@ -196,11 +196,11 @@ fun EditEventScreen(
                     ) {
                         OutlinedTextField(
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color.Gray,
-                                unfocusedBorderColor = Color.Gray,
-                                focusedLabelColor = Color.Gray,
-                                unfocusedLabelColor = Color.Gray,
-                                cursorColor = Color.Gray
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
                             ),
                             value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
                                 Date(
@@ -233,12 +233,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = mileage, onValueChange = { mileage = it },
                                 label = {
                                     Text(
@@ -272,12 +272,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = fuelStation, onValueChange = { fuelStation = it },
                                 label = {
                                     Text(
@@ -320,12 +320,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = fuelType, onValueChange = { fuelType = it },
                                 label = {
                                     Text(
@@ -348,12 +348,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = litres, onValueChange = { litres = it },
                                 label = {
                                     Text(
@@ -387,12 +387,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = price, onValueChange = { price = it },
                                 label = {
                                     Text(
@@ -426,12 +426,12 @@ fun EditEventScreen(
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.Gray,
-                                    focusedLabelColor = Color.Gray,
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color.Gray
-                                ),
+                                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                cursorColor = MaterialTheme.colorScheme.outline
+                            ),
                                 value = totalCost, onValueChange = { totalCost = it },
                                 label = {
                                     Text(
