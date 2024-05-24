@@ -14,14 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.DateRange
@@ -30,14 +27,16 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -53,7 +52,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -70,6 +68,7 @@ import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditEventScreen(
     navController: NavController,
@@ -83,12 +82,25 @@ fun EditEventScreen(
     val context = LocalContext.current
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
+
     // State for the date as timestamp
-    val dateTimestamp by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
-    val dateTimestampState = rememberSaveable { mutableStateOf(dateTimestamp) }
+    var dateTimestamp by rememberSaveable { mutableStateOf(event?.date?.time ?: System.currentTimeMillis()) }
+    Log.d("EditEventScreen", "dateTimestamp at declaration: ${Date(dateTimestamp)}")
+    Log.d("EditEventScreen", "event?.date?.time: ${event?.date?.time}")
+    Log.d("EditEventScreen", "event?.date: ${event?.date}")
+    Log.d("EditEventScreen", "Date(event?.date?.time): ${event?.date?.time?.let { Date(it) }}")
+
+    var showDatePicker by rememberSaveable { mutableStateOf(false) }
+    val dateState = rememberDatePickerState(initialSelectedDateMillis = dateTimestamp)
+
+    fun onDateSelected(newDateMillis: Long) {
+        dateTimestamp = newDateMillis
+    }
+
+
 
     // Create a new FuellingEvent object
-    val date = Date(dateTimestampState.value)  // Convert timestamp to java.sql.Date
+    val date = Date(dateTimestamp)  // Convert timestamp to java.sql.Date
     var mileage by rememberSaveable { mutableStateOf("") }
     var fuelStation by rememberSaveable { mutableStateOf("") }
     var fuelType by rememberSaveable { mutableStateOf("") }
@@ -139,7 +151,7 @@ fun EditEventScreen(
     val totalCostFocusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    dateTimestampState.value = event?.date?.time ?: dateTimestampState.value
+//    dateTimestamp = event?.date?.time ?: dateTimestamp
     mileage = event?.mileage.toString()
     fuelStation = event?.fuelStation ?: ""
     fuelType = event?.fuelType ?: ""
@@ -148,7 +160,37 @@ fun EditEventScreen(
     totalCost = event?.totalCost.toString()
     imageUri = event?.imageUri ?: listOf()
 
-
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDatePicker = false
+                        onDateSelected(dateState.selectedDateMillis!!)
+//                                    date = Date(dateTimestampState.value)
+                        Log.d("EditEventScreen", "Date bottom: $date")
+                        Log.d("EditEventScreen", "dateTimestamp: $dateTimestamp, as Date: ${Date(dateTimestamp)}")
+//                        Log.d("EditEventScreen", "dateTimestampState: $dateTimestampState, as Date: ${Date(dateTimestampState.value)}")
+                    }
+                ) {
+                    Text(text = "OK")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDatePicker = false }
+                ) {
+                    Text(text = "Cancel")
+                }
+            }
+        ) {
+            DatePicker(
+                state = dateState.let { it.setSelection(dateTimestamp); it },
+                showModeToggle = true
+            )
+        }
+    }
 
 
     Scaffold(
@@ -203,9 +245,7 @@ fun EditEventScreen(
                                 cursorColor = MaterialTheme.colorScheme.outline
                             ),
                             value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                Date(
-                                    dateTimestampState.value
-                                )
+                                dateTimestamp
                             ),
                             onValueChange = { },
                             readOnly = true,
@@ -221,7 +261,12 @@ fun EditEventScreen(
                                 Icon(Icons.Outlined.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
-                                            showDatePicker(context, dateTimestampState)
+                                            showDatePicker = true
+                                            Log.d("EditEventScreen", "Date before: $date")
+                                            Log.d("EditEventScreen", "dateTimestamp: $dateTimestamp, as Date: ${Date(dateTimestamp)}")
+//                                            Log.d("EditEventScreen", "dateTimestampState: $dateTimestampState, as Date: ${Date(dateTimestampState.value)}")
+//                                            dateState.selectedDateMillis()
+                                            Log.d("EditEventScreen", "Date after: $date")
                                         }
                                 )
                             },
@@ -598,8 +643,6 @@ fun EditEventScreen(
                         }
                     )
                 }
-
-
             }
         })
 }

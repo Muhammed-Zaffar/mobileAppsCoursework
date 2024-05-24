@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-import android.app.DatePickerDialog
+//import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,14 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
@@ -32,19 +29,19 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -53,29 +50,24 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.myapplication.data.FuellingEvent
 import com.example.myapplication.data.FuellingEventViewModel
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.absoluteValue
 
 fun checkIfAnyFieldIsEmpty(
     date: String, mileage: String, fuelStation: String,
@@ -86,40 +78,18 @@ fun checkIfAnyFieldIsEmpty(
 }
 
 
-fun showDatePicker(
-    context: Context,
-    dateState: MutableState<Long>,
-//    onDateSelected: (Long) -> Unit
-) {
-    val calendar = Calendar.getInstance()
-    calendar.timeInMillis = dateState.value  // Initialize the calendar to the current date state
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, selectedYear, selectedMonth, dayOfMonth ->
-            // Update dateState with selected date
-//            dateState.value = "${dayOfMonth}/${selectedMonth + 1}/${selectedYear}"
-//            onDateSelected(calendar.timeInMillis)
-            calendar.set(selectedYear, selectedMonth, dayOfMonth)
-            dateState.value = calendar.timeInMillis
-        }, year, month, day
-    )
-    datePickerDialog.show()
-
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventScreen(navController: NavController, view_model: FuellingEventViewModel = viewModel()) {
     val context = LocalContext.current
     var answer by rememberSaveable { mutableStateOf("") }
     var showDialog by rememberSaveable { mutableStateOf(false) }
+
     // State for the date as timestamp
     val dateTimestamp by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
     val dateTimestampState = rememberSaveable { mutableStateOf(dateTimestamp) }
+    var showDate by rememberSaveable { mutableStateOf(false) }
+    val dateState = rememberDatePickerState()
 
     // Create a new FuellingEvent object
     val date = Date(dateTimestampState.value)  // Convert timestamp to java.sql.Date
@@ -211,9 +181,7 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                 cursorColor = MaterialTheme.colorScheme.outline
                             ),
                             value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                Date(
-                                    dateTimestampState.value
-                                )
+                                date
                             ),
                             onValueChange = { },
                             readOnly = true,
@@ -229,7 +197,8 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                 Icon(Icons.Outlined.DateRange, contentDescription = "Select Date",
                                     modifier = Modifier
                                         .clickable {
-                                            showDatePicker(context, dateTimestampState)
+//                                            showDatePicker(context, dateTimestampState)
+                                            showDate = true
                                             Log.d(
                                                 "AddEventScreen",
                                                 "Date: ${dateTimestampState.value} \n" +
@@ -249,12 +218,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = mileage, onValueChange = { mileage = it },
                                 label = {
                                     Text(
@@ -288,12 +257,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = fuelStation, onValueChange = { fuelStation = it },
                                 label = {
                                     Text(
@@ -336,12 +305,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = fuelType, onValueChange = { fuelType = it },
                                 label = {
                                     Text(
@@ -364,12 +333,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = litres, onValueChange = { litres = it },
                                 label = {
                                     Text(
@@ -403,12 +372,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = price, onValueChange = { price = it },
                                 label = {
                                     Text(
@@ -442,12 +411,12 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         Row {
                             OutlinedTextField(
                                 colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.outline,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
-                                cursorColor = MaterialTheme.colorScheme.outline
-                            ),
+                                    focusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                    focusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.outlineVariant,
+                                    cursorColor = MaterialTheme.colorScheme.outline
+                                ),
                                 value = totalCost, onValueChange = { totalCost = it },
                                 label = {
                                     Text(
@@ -610,6 +579,34 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                             }
                         }
                     )
+                }
+
+                if (showDate) {
+                    DatePickerDialog(
+                        onDismissRequest = { showDate = false },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showDate = false
+                                    dateTimestampState.value = dateState.selectedDateMillis!!
+                                }
+                            ) {
+                                Text(text = "OK")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = { showDate = false }
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    ) {
+                        DatePicker(
+                            state = dateState,
+                            showModeToggle = true
+                        )
+                    }
                 }
 
 
