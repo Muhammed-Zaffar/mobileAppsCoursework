@@ -53,6 +53,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -131,10 +132,11 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
     var imageUri by rememberSaveable { mutableStateOf<List<Uri>>(listOf()) }
 
     // Activity result launcher for picking images
-    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uri: List<@JvmSuppressWildcards Uri> ->
-        imageUri = uri
-        Log.d("ImagePickerIcon", "Image URI: $uri")
-    }
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uri: List<@JvmSuppressWildcards Uri> ->
+            imageUri = uri
+            Log.d("ImagePickerIcon", "Image URI: $uri")
+        }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -201,8 +203,18 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         horizontalAlignment = Alignment.Start
                     ) {
                         OutlinedTextField(
-//                            value = dateTimestamp.toString(),
-                            value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value)),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Gray,
+                                unfocusedBorderColor = Color.Gray,
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray,
+                                cursorColor = Color.Gray
+                            ),
+                            value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                Date(
+                                    dateTimestampState.value
+                                )
+                            ),
                             onValueChange = { },
                             readOnly = true,
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
@@ -221,7 +233,10 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                             Log.d(
                                                 "AddEventScreen",
                                                 "Date: ${dateTimestampState.value} \n" +
-                                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value))
+                                                        SimpleDateFormat(
+                                                            "dd/MM/yyyy",
+                                                            Locale.getDefault()
+                                                        ).format(Date(dateTimestampState.value))
                                             ) // Log the selected date
                                         }
                                 )
@@ -233,6 +248,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = mileage, onValueChange = { mileage = it },
                                 label = {
                                     Text(
@@ -265,6 +287,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = fuelStation, onValueChange = { fuelStation = it },
                                 label = {
                                     Text(
@@ -290,7 +319,8 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                                 // Open the phone's default map app
                                                 val gmmIntentUri =
                                                     Uri.parse("geo:0,0?q=gas_station $fuelStation")
-                                                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                                                val mapIntent =
+                                                    Intent(Intent.ACTION_VIEW, gmmIntentUri)
                                                 mapIntent.setPackage("com.google.android.apps.maps")
                                                 context.startActivity(mapIntent)
                                                 Log.d(
@@ -305,6 +335,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = fuelType, onValueChange = { fuelType = it },
                                 label = {
                                     Text(
@@ -326,6 +363,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = litres, onValueChange = { litres = it },
                                 label = {
                                     Text(
@@ -358,6 +402,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = price, onValueChange = { price = it },
                                 label = {
                                     Text(
@@ -390,6 +441,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = totalCost, onValueChange = { totalCost = it },
                                 label = {
                                     Text(
@@ -422,6 +480,13 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                         }
 
                         OutlinedTextField(
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Gray,
+                                unfocusedBorderColor = Color.Gray,
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray,
+                                cursorColor = Color.Gray
+                            ),
                             value = "",
                             onValueChange = {},
                             label = {
@@ -459,7 +524,6 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                 .padding(start = 10.dp, bottom = 10.dp)
                                 .fillMaxWidth(0.75f),
                             readOnly = true,
-                            colors = OutlinedTextFieldDefaults.colors()
                         )
 
                         Row(
@@ -506,7 +570,10 @@ fun AddEventScreen(navController: NavController, view_model: FuellingEventViewMo
                                     )
                                 )
                                 // add the event to the list then sync with database
-                                Log.d("AddEventScreen", "imageUri: ${imageUri::class.java.typeName}")
+                                Log.d(
+                                    "AddEventScreen",
+                                    "imageUri: ${imageUri::class.java.typeName}"
+                                )
                                 navController.popBackStack()
                                 "Event added successfully"
                             } else {

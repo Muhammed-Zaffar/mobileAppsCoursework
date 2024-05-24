@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
@@ -70,7 +71,11 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EditEventScreen(navController: NavController, view_model: FuellingEventViewModel = viewModel(), eventID: Int) {
+fun EditEventScreen(
+    navController: NavController,
+    view_model: FuellingEventViewModel = viewModel(),
+    eventID: Int
+) {
     val errorIconPainter: Painter = rememberVectorPainter(image = Icons.Filled.Warning)
     val eventGrabbed = view_model.getFuellingEventByID(eventID)
     val event by eventGrabbed.observeAsState()
@@ -93,25 +98,27 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
     var imageUri by rememberSaveable { mutableStateOf<List<Uri>>(listOf()) }
 
     // Activity result launcher for picking images
-    val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<@JvmSuppressWildcards Uri> ->
-        if (uris.isNotEmpty()) {
-            val contentResolver = context.contentResolver
-            for (uri in uris) {
-                try {
-                    // Take persistable URI permission to access the content URI across reboots
-                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    contentResolver.takePersistableUriPermission(
-                        uri,
-                        takeFlags
-                    )
-                } catch (e: Exception) {
-                    Log.e("ImagePickerIcon", "Failed to take persistable URI permissions", e)
+    val pickImageLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<@JvmSuppressWildcards Uri> ->
+            if (uris.isNotEmpty()) {
+                val contentResolver = context.contentResolver
+                for (uri in uris) {
+                    try {
+                        // Take persistable URI permission to access the content URI across reboots
+                        val takeFlags: Int =
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        contentResolver.takePersistableUriPermission(
+                            uri,
+                            takeFlags
+                        )
+                    } catch (e: Exception) {
+                        Log.e("ImagePickerIcon", "Failed to take persistable URI permissions", e)
+                    }
                 }
+                imageUri = uris
+                Log.d("ImagePickerIcon", "Image URI: $uris")
             }
-            imageUri = uris
-            Log.d("ImagePickerIcon", "Image URI: $uris")
         }
-    }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -188,7 +195,18 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                         horizontalAlignment = Alignment.Start
                     ) {
                         OutlinedTextField(
-                            value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(dateTimestampState.value)),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Gray,
+                                unfocusedBorderColor = Color.Gray,
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray,
+                                cursorColor = Color.Gray
+                            ),
+                            value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                Date(
+                                    dateTimestampState.value
+                                )
+                            ),
                             onValueChange = { },
                             readOnly = true,
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
@@ -214,6 +232,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = mileage, onValueChange = { mileage = it },
                                 label = {
                                     Text(
@@ -246,6 +271,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = fuelStation, onValueChange = { fuelStation = it },
                                 label = {
                                     Text(
@@ -271,7 +303,8 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                                 // Open the phone's default map app
                                                 val gmmIntentUri =
                                                     Uri.parse("geo:0,0?q=gas_station $fuelStation")
-                                                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                                                val mapIntent =
+                                                    Intent(Intent.ACTION_VIEW, gmmIntentUri)
                                                 mapIntent.setPackage("com.google.android.apps.maps")
                                                 context.startActivity(mapIntent)
                                                 Log.d(
@@ -286,6 +319,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = fuelType, onValueChange = { fuelType = it },
                                 label = {
                                     Text(
@@ -307,6 +347,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = litres, onValueChange = { litres = it },
                                 label = {
                                     Text(
@@ -339,6 +386,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = price, onValueChange = { price = it },
                                 label = {
                                     Text(
@@ -371,6 +425,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
 
                         Row {
                             OutlinedTextField(
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Gray,
+                                    unfocusedBorderColor = Color.Gray,
+                                    focusedLabelColor = Color.Gray,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = Color.Gray
+                                ),
                                 value = totalCost, onValueChange = { totalCost = it },
                                 label = {
                                     Text(
@@ -403,6 +464,13 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                         }
 
                         OutlinedTextField(
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Gray,
+                                unfocusedBorderColor = Color.Gray,
+                                focusedLabelColor = Color.Gray,
+                                unfocusedLabelColor = Color.Gray,
+                                cursorColor = Color.Gray
+                            ),
                             value = "",
                             onValueChange = {},
                             label = {
@@ -440,7 +508,6 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                 .padding(start = 10.dp, bottom = 10.dp)
                                 .fillMaxWidth(0.75f),
                             readOnly = true,
-                            colors = OutlinedTextFieldDefaults.colors()
                         )
 
                         Row(
@@ -490,7 +557,10 @@ fun EditEventScreen(navController: NavController, view_model: FuellingEventViewM
                                     )
                                 )
                                 // add the event to the list then sync with database
-                                Log.d("EditEventScreen", "imageUri: ${imageUri::class.java.typeName}")
+                                Log.d(
+                                    "EditEventScreen",
+                                    "imageUri: ${imageUri::class.java.typeName}"
+                                )
                                 navController.popBackStack()
                                 "Event updated successfully"
                             } else {
